@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\News;
+namespace App\Repositories\Admin\News;
 
 use App\Models\News;
 

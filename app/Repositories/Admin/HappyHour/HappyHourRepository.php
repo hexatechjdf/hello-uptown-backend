@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\HappyHour;
+namespace App\Repositories\Admin\HappyHour;
 
 use App\Models\HappyHour;
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Services\HealthWellness;
+namespace App\Services\Admin\HealthWellness;
 
-use App\Repositories\HealthWellness\HealthWellnessRepository;
+use App\Repositories\Admin\HealthWellness\HealthWellnessRepository;
 use Illuminate\Http\UploadedFile;
 
 class HealthWellnessService

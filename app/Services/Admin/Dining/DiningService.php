@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Services\Dining;
+namespace App\Services\Admin\Dining;
 
-use App\Repositories\Dining\DiningRepository;
+use App\Repositories\Admin\Dining\DiningRepository;
 use Illuminate\Http\UploadedFile;
 
 class DiningService

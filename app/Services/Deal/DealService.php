@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Deal;
 
 use App\Models\Deal;
-use App\Repositories\DealRepository;
+use App\Repositories\Deal\DealRepository;
 use Illuminate\Support\Facades\Storage;
 
 class DealService

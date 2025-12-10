@@ -1,5 +1,6 @@
 <?php
 
+namespace App\Http\Requests\Admin\ArtFair;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ArtFairRequest extends FormRequest

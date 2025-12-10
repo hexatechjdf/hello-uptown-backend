@@ -28,8 +28,8 @@ class DashboardService
     public function topCoupons($businessId)
     {
         return Coupon::where('business_id', $businessId)
-            ->where('status', true)
-            ->orderBy('redemption_count', 'desc')
+            // ->where('status', true)
+            ->orderBy('created_at', 'desc')
             ->take(10)
             ->get();
     }

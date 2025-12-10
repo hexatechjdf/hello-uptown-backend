@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources\Admin;
+namespace App\Resources\Admin\ArtFair;    
 
 use Illuminate\Http\Resources\Json\JsonResource;
 

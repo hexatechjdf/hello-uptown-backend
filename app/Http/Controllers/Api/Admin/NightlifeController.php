@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\NightlifeRequest;
 use App\Http\Resources\NightlifeResource;
-use App\Services\Nightlife\NightlifeService;
+use App\Services\Admin\Nightlife\NightlifeService;
 use App\Models\Nightlife;
 use App\Helpers\ApiResponse;
 use Illuminate\Http\Request;

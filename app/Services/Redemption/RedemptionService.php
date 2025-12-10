@@ -1,4 +1,9 @@
 <?php
+
+namespace App\Services\Redemption;
+
+use App\Models\Redemption;
+
 class RedemptionService
 {
     public function list(array $filters)

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\NewsRequest;
 use App\Http\Resources\NewsResource;
-use App\Services\News\NewsService;
+use App\Services\Admin\News\NewsService;
 use App\Models\News;
 use App\Helpers\ApiResponse;
 use Illuminate\Http\Request;

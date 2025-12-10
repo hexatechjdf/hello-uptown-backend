@@ -1,4 +1,5 @@
 <?php
+namespace App\Services\Admin\ArtFair;
 class ArtFairService
 {
     public function prepareData(array $data): array

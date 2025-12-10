@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DiningRequest;
 use App\Http\Resources\DiningResource;
-use App\Services\Dining\DiningService;
+use App\Services\Admin\Dining\DiningService;
 use App\Models\Dining;
 use App\Helpers\ApiResponse;
 use Illuminate\Http\Request;

@@ -1,5 +1,6 @@
 <?php
 
+namespace App\Http\Requests\Admin\FarmerMarket;
 use Illuminate\Foundation\Http\FormRequest;
 class UpdateFarmerMarketRequest extends FormRequest
 {

@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\Deal;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Deal\StoreDealRequest;
 use App\Http\Requests\Deal\UpdateDealRequest;
-use App\Http\Resources\DealResource;
+use App\Resources\Deal\DealResource;
 use App\Models\Deal;
-use App\Services\DealService;
+use App\Services\Deal\DealService;
 use App\Helpers\ApiResponse;
 use Illuminate\Http\Request;
 

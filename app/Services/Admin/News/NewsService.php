@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Services\News;
+namespace App\Services\Admin\News;
 
-use App\Repositories\News\NewsRepository;
+use App\Repositories\Admin\News\NewsRepository;
 use Illuminate\Http\UploadedFile;
 
 class NewsService

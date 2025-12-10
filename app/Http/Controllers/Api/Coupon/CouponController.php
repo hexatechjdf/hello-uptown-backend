@@ -1,18 +1,19 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\Coupon;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Coupons\StoreCouponRequest;
 use App\Http\Requests\Coupons\UpdateCouponRequest;
-use App\Http\Resources\Coupon\CouponResource;
-use App\Services\CouponService;
+use App\Resources\Coupon\CouponResource;
+use App\Services\Coupon\CouponService;
 use App\Models\Coupon;
 use App\Helpers\ApiResponse;
 
 class CouponController extends Controller
 {
-    public function __construct(private CouponService $service) {
+    public function __construct(private CouponService $service)
+    {
         $this->service = $service;
     }
 
@@ -38,7 +39,10 @@ class CouponController extends Controller
             'Coupon created successfully'
         );
     }
-
+    public function show(Coupon $coupon)
+    {
+        return ApiResponse::resource(new CouponResource($coupon));
+    }
     public function update(UpdateCouponRequest $request, Coupon $coupon)
     {
         $coupon = $this->service->update($coupon, $request->validated());

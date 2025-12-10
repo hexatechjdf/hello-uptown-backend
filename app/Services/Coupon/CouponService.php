@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Coupon;
 
 use App\Models\Coupon;
 

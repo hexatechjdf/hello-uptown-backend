@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Services\Nightlife;
+namespace App\Services\Admin\Nightlife;
 
-use App\Repositories\Nightlife\NightlifeRepository;
+use App\Repositories\Admin\Nightlife\NightlifeRepository;
 use Illuminate\Http\UploadedFile;
 
 class NightlifeService

@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\Business;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Services\DashboardService;
 use App\Helpers\ApiResponse;
+use App\Resources\Coupon\CouponResource;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
@@ -30,8 +31,10 @@ class DashboardController extends Controller
         $businessId = Auth::user()->business->id;
 
         $coupons = $this->dashboard->topCoupons($businessId);
-
-        return ApiResponse::success($coupons, 'Top active coupons loaded');
+        return ApiResponse::collection(
+            CouponResource::collection($coupons),
+            'Top active coupons loaded'
+        );
     }
 
     public function recentRedemptions()

@@ -1,4 +1,9 @@
 <?php
+
+namespace App\Repositories\Admin\FarmerMarket;
+
+use App\Models\FarmerMarket;
+
 class FarmerMarketRepository
 {
     public function paginate(array $filters)

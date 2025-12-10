@@ -4,13 +4,13 @@ namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Helpers\ApiResponse;
-use App\Services\Admin\AdminDashboardService;
+use App\Services\Admin\DashboardService;
 
 class DashboardController extends Controller
 {
     protected $service;
 
-    public function __construct(AdminDashboardService $service)
+    public function __construct(DashboardService $service)
     {
         $this->service = $service;
     }

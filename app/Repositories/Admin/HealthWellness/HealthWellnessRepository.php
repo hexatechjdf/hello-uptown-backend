@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\HealthWellness;
+namespace App\Repositories\Admin\HealthWellness;
 
 use App\Models\HealthWellness;
 

@@ -1,4 +1,9 @@
 <?php
+namespace App\Services\Admin\FarmerMarket;
+
+use App\Models\FarmerMarket;
+use App\Repositories\Admin\FarmerMarket\FarmerMarketRepository;
+
 class FarmerMarketService
 {
     public function store(array $data)

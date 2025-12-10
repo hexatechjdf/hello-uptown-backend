@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\HappyHourRequest;
 use App\Http\Resources\HappyHourResource;
-use App\Services\HappyHour\HappyHourService;
+use App\Services\Admin\HappyHour\HappyHourService;
 use App\Models\HappyHour;
 use App\Helpers\ApiResponse;
 use Illuminate\Http\Request;

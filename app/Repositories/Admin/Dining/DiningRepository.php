@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\Dining;
+namespace App\Repositories\Admin\Dining;
 
 use App\Models\Dining;
 

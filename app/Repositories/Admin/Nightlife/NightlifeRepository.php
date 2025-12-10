@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\Nightlife;
+namespace App\Repositories\Admin\Nightlife;
 
 use App\Models\Nightlife;
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Admin\Porchfest;
 
-use App\Repositories\PorchfestRepository;
+use App\Repositories\Admin\Porchfest\PorchfestRepository;
 use Illuminate\Http\UploadedFile;
 
 class PorchfestService

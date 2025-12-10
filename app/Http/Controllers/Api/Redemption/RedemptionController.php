@@ -1,7 +1,13 @@
 <?php
-namespace App\Http\Controllers\Api\V1\Business;
+
+namespace App\Http\Controllers\Api\Redemption;
+
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Redemption\ListRedemptionRequest;
+use App\Services\Redemption\RedemptionService;
 use App\Helpers\ApiResponse;
+use App\Resources\Redemption\RedemptionResource;
+
 class RedemptionController extends Controller
 {
     protected $service;
@@ -14,11 +20,9 @@ class RedemptionController extends Controller
     public function index(ListRedemptionRequest $request)
     {
         $result = $this->service->list($request->validated());
-
-        return ApiResponse::paginated(
+        return ApiResponse::collection(
             RedemptionResource::collection($result),
-            'Redemption list retrieved successfully',
-            $result
+            'Redemption list retrieved successfully'
         );
     }
 }

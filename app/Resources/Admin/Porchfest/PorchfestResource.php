@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Resources;
+namespace App\Resources\Admin\Porchfest;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 

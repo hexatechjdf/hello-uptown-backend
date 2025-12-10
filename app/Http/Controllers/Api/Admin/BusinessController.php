@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Services\Admin\BusinessService;
-use App\Http\Resources\Admin\AdminBusinessResource;
+use App\Resources\Admin\BusinessResource;
 use App\Helpers\ApiResponse;
 use App\Models\Business;
 use Illuminate\Http\Request;
@@ -20,7 +20,7 @@ class BusinessController extends Controller
         $businesses = $this->service->list($request->all());
 
         return ApiResponse::collection(
-            AdminBusinessResource::collection($businesses),
+            BusinessResource::collection($businesses),
             'Businesses fetched successfully'
         );
     }
@@ -39,7 +39,7 @@ class BusinessController extends Controller
         $business = $this->service->create($data);
 
         return ApiResponse::resource(
-            new AdminBusinessResource($business),
+            new BusinessResource($business),
             'Business created successfully',
             [],
             201
@@ -49,7 +49,7 @@ class BusinessController extends Controller
     public function show(Business $business)
     {
         return ApiResponse::resource(
-            new AdminBusinessResource($business->load('user')),
+            new BusinessResource($business->load('user')),
             'Business details'
         );
     }
@@ -67,7 +67,7 @@ class BusinessController extends Controller
         $updated = $this->service->update($business, $data);
 
         return ApiResponse::resource(
-            new AdminBusinessResource($updated),
+            new BusinessResource($updated),
             'Business updated successfully'
         );
     }

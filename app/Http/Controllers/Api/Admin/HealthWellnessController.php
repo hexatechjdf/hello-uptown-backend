@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\HealthWellnessRequest;
 use App\Http\Resources\HealthWellnessResource;
-use App\Services\HealthWellness\HealthWellnessService;
+use App\Services\Admin\HealthWellness\HealthWellnessService;
 use App\Models\HealthWellness;
 use App\Helpers\ApiResponse;
 use Illuminate\Http\Request;

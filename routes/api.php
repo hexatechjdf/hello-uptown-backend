@@ -1,7 +1,10 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\ArtFairController;
+use App\Http\Controllers\Api\Admin\BusinessController;
 use App\Http\Controllers\Api\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Api\Admin\DiningController;
+use App\Http\Controllers\Api\Admin\FarmerMarketController;
 use App\Http\Controllers\Api\Admin\HappyHourController;
 use App\Http\Controllers\Api\Admin\HealthWellnessController;
 use App\Http\Controllers\Api\Admin\MusicConcertController;
@@ -9,15 +12,14 @@ use App\Http\Controllers\Api\Admin\NewsController;
 use App\Http\Controllers\Api\Admin\NightlifeController;
 use App\Http\Controllers\Api\Admin\PorchfestController;
 use App\Http\Controllers\Api\Auth\AuthController;
-use App\Http\Controllers\Api\Business\BusinessController;
-use App\Http\Controllers\Api\CouponController as ApiCouponController;
-use App\Http\Controllers\Api\DealController as ApiDealController;
+use App\Http\Controllers\Api\Coupon\CouponController as ApiCouponController;
+use App\Http\Controllers\Api\Deal\DealController as ApiDealController;
 use App\Http\Controllers\Api\Frontend\DealController;
 use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\Frontend\CouponController;
 use App\Http\Controllers\Api\Frontend\ContactMessageController;
-use App\Http\Controllers\Api\V1\Business\DashboardController;
-use App\Http\Controllers\Api\V1\Business\RedemptionController;
+use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\Redemption\RedemptionController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -58,7 +60,7 @@ Route::middleware(['auth:sanctum', 'role:business_admin'])->group(function () {
 
 // Admin Routes
 Route::prefix('admin')
-    ->middleware(['auth:sanctum', 'role:superadmin'])
+    ->middleware(['auth:sanctum', 'role:business_admin'])
     ->group(function () {
 
         Route::get('/dashboard', [AdminDashboardController::class, 'index']);

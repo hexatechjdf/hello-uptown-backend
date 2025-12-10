@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Services\HappyHour;
+namespace App\Services\Admin\HappyHour;
 
-use App\Repositories\HappyHour\HappyHourRepository;
+use App\Repositories\Admin\HappyHour\HappyHourRepository;
 use Illuminate\Http\UploadedFile;
 
 class HappyHourService

@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\MusicConcert;
 use App\Services\Admin\MusicConcertService;
-use App\Http\Resources\Admin\MusicConcertResource;
+use App\Resources\Admin\MusicConcertResource;
 use App\Helpers\ApiResponse;
 
 class MusicConcertController extends Controller
@@ -15,7 +15,6 @@ class MusicConcertController extends Controller
     {
         $query = MusicConcert::query();
 
-        // Search
         if ($request->search) {
             $query->where('main_heading', 'like', "%{$request->search}%");
         }

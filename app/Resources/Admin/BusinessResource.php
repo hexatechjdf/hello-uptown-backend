@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Resources\Admin;
+namespace App\Resources\Admin;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class AdminBusinessResource extends JsonResource
+class BusinessResource extends JsonResource
 {
     public function toArray($request)
     {

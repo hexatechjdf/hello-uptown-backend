@@ -1,6 +1,7 @@
 <?php
-use Illuminate\Http\Resources\Json\JsonResource;
 
+namespace App\Resources\Admin\FarmerMarket;
+use Illuminate\Http\Resources\Json\JsonResource;
 class FarmerMarketResource extends JsonResource
 {
     public function toArray($request)

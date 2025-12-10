@@ -1,4 +1,6 @@
 <?php
+namespace App\Repositories\Admin\ArtFair;   
+use App\Models\ArtFair;
 class ArtFairRepository
 {
     public function list(array $filters)

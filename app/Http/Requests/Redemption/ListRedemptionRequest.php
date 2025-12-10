@@ -1,7 +1,8 @@
 <?php
 
-use Illuminate\Foundation\Http\FormRequest;
+namespace App\Http\Requests\Redemption;
 
+use Illuminate\Foundation\Http\FormRequest;
 class ListRedemptionRequest extends FormRequest
 {
     public function authorize(): bool

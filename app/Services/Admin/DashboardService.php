@@ -6,7 +6,7 @@ use App\Models\Business;
 use App\Models\Coupon;
 use App\Models\Deal;
 
-class AdminDashboardService
+class DashboardService
 {
     public function stats(): array
     {
