@@ -20,13 +20,27 @@ use App\Http\Controllers\Api\Frontend\ContactMessageController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\Frontend\HomeController;
 use App\Http\Controllers\Api\Redemption\RedemptionController;
+use App\Models\Role;
 use Illuminate\Support\Facades\Route;
 
 
 
-// website routes
+Route::get('/', function () {
+    return response()->json(['message' => 'API is running']);
+});
 
-Route::get('/home', [HomeController::class, 'index']);
+// website routes
+Route::prefix('home')->group(function () {
+    Route::get('/carousel-businesses', [HomeController::class, 'carouselBusinesses']);
+    Route::get('/top-rated-partners', [HomeController::class, 'topRatedPartners']);
+    Route::get('/top-deals-of-month', [HomeController::class, 'topDealsOfMonth']);
+    Route::get('/browse-categories', [HomeController::class, 'browseCategories']);
+    Route::get('/featured-businesses', [HomeController::class, 'featuredBusinesses']);
+    Route::get('/contact-us', [HomeController::class, 'contactUs']);
+    Route::get('/newsletter', [HomeController::class, 'newsletter']);
+    Route::get('/footer', [HomeController::class, 'footer']);
+});
+
 Route::get('/deals', [DealController::class, 'index']);
 Route::get('/deals/{id}', [DealController::class, 'show']);
 Route::get('/businesses', [BusinessController::class, 'index']);
@@ -37,12 +51,14 @@ Route::get('/coupons/{id}', [CouponController::class, 'show']);
 Route::post('/contact-us', [ContactMessageController::class, 'submit']);
 
 
-
+Route::get('/me', [HomeController::class, 'GetMyInfo'])->middleware('auth:sanctum');
 Route::prefix('auth')->group(function () {
     Route::post('register', [AuthController::class, 'register']);
     Route::post('login', [AuthController::class, 'login']);
     Route::middleware('auth:sanctum')->post('logout', [AuthController::class, 'logout']);
 });
+
+
 
 Route::middleware(['auth:sanctum', 'role:business_admin'])->group(function () {
     Route::prefix('business')->group(function () {

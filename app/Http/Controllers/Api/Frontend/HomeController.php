@@ -11,45 +11,93 @@ use Illuminate\Http\Request;
 use App\Helpers\ApiResponse;
 use App\Resources\Business\BusinessResource;
 use App\Resources\Deal\DealResource as DealDealResource;
+use App\Resources\User\UserResource;
 
 class HomeController extends Controller
 {
-    public function index(Request $request)
+    public function carouselBusinesses()
     {
-        $carouselBusinesses = Business::where('status', true)
+        $businesses = Business::where('status', true)
             ->orderByDesc('created_at')
             ->take(5)
             ->get();
 
-        $topRatedPartners = Business::where('status', true)
+        return ApiResponse::collection(
+            BusinessResource::collection($businesses),
+            'Carousel businesses fetched successfully'
+        );
+    }
+    public function topRatedPartners()
+    {
+        $businesses = Business::where('status', true)
             // ->orderByDesc('rating')
             ->take(4)
             ->get();
 
-        $topDealsOfMonth = Deal::where('status', true)
+        return ApiResponse::collection(
+            BusinessResource::collection($businesses),
+            'Top rated partners fetched successfully'
+        );
+    }
+    public function topDealsOfMonth()
+    {
+        $deals = Deal::where('status', true)
             ->whereMonth('created_at', now()->month)
             ->take(5)
             ->get();
 
-        $browseCategories = Category::all();
+        return ApiResponse::collection(
+            DealDealResource::collection($deals),
+            'Top deals of the month fetched successfully'
+        );
+    }
+    public function browseCategories()
+    {
+        $categories = Category::all();
 
-        $featuredBusinesses = Business::
+        return ApiResponse::collection(
+            $categories,
+            'Categories fetched successfully'
+        );
+    }
+    public function featuredBusinesses()
+    {
+        $businesses = Business::
             // where('featured', true)
             take(5)
             ->get();
 
+        return ApiResponse::collection(
+            BusinessResource::collection($businesses),
+            'Featured businesses fetched successfully'
+        );
+    }
+    public function contactUs()
+    {
         $contactUs = [
             'email' => config('site.contact_email', 'info@hellouptown.com'),
             'phone' => config('site.contact_phone', '+1 234 567 890'),
             'address' => config('site.contact_address', '123 Main Street'),
         ];
-
+        return ApiResponse::success(
+            $contactUs,
+            'Contact us information fetched successfully'
+        );
+    }
+    public function newsletter()
+    {
         $newsletter = [
             'title' => 'Subscribe to our newsletter',
             'description' => 'Get the latest deals and updates directly in your inbox.',
         ];
 
-        // 8️⃣ Footer - static config
+        return ApiResponse::success(
+            $newsletter,
+            'Newsletter information fetched successfully'
+        );
+    }
+    public function footer()
+    {
         $footer = [
             'copyright' => '© ' . date('Y') . ' HelloUptown. All rights reserved.',
             'socials' => [
@@ -58,16 +106,17 @@ class HomeController extends Controller
                 'twitter' => config('site.twitter'),
             ],
         ];
-
-        return ApiResponse::success([
-            'carouselBusinesses' => BusinessResource::collection($carouselBusinesses),
-            'topRatedPartners' => BusinessResource::collection($topRatedPartners),
-            'topDealsOfMonth' => DealDealResource::collection($topDealsOfMonth),
-            'browseCategories' => $browseCategories,
-            'featuredBusinesses' => BusinessResource::collection($featuredBusinesses),
-            'contactUs' => $contactUs,
-            'newsletter' => $newsletter,
-            'footer' => $footer,
-        ], 'Home page data fetched successfully');
+        return ApiResponse::success(
+            $footer,
+            'Footer information fetched successfully'
+        );
+    }
+    public function GetMyInfo(Request $request)
+    {
+        $user  = $request->user();
+        return ApiResponse::resource(
+            new UserResource($user),
+            'User Fetched Successfully'
+        );
     }
 }
