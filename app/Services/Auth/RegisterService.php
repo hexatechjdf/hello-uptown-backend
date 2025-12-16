@@ -25,7 +25,7 @@ class RegisterService
                 'last_name'  => $data['last_name'],
                 'email'      => $data['email'],
                 'phone'      => $data['phone'] ?? null,
-                'password'   => Hash::make($data['password']),
+                'password'   => $data['password'],
             ]);
 
             // Attach Role

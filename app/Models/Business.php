@@ -81,6 +81,12 @@ class Business extends Model
             'imageUrl'            => $this->slider_image ? asset($this->slider_image) : null,
             'imageOverlayHeading' => $this->image_overlay_heading,
             'imageOverlayHeading2'=> $this->image_overlay_heading2,
+            'sliderText1'         => $this->slider_text1,
+            'sliderText1Value'    => $this->slider_text1_value,
+            'sliderText2'         => $this->slider_text2,
+            'sliderText2Value'    => $this->slider_text2_value,
+            'sliderText3'         => $this->slider_text3,
+            'sliderText3Value'    => $this->slider_text3_value,
         ];
     }
 

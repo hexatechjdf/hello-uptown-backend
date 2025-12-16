@@ -21,7 +21,8 @@ return new class extends Migration
             $table->text('short_description')->nullable();
             $table->longText('long_description')->nullable();
             $table->string('description')->nullable();
-            $table->string('category')->nullable();
+            $table->unsignedBigInteger('category_id')->nullable();
+            $table->foreign('category_id')->references('id')->on('categories')->nullOnDelete();
             $table->json('tags')->nullable();
 
             // Branding
@@ -52,6 +53,14 @@ return new class extends Migration
             $table->string('slider_image')->nullable();
             $table->string('image_overlay_heading')->nullable();
             $table->string('image_overlay_heading2')->nullable();
+
+            $table->string('slider_text1')->nullable();
+            $table->string('slider_text1_value')->nullable();
+            $table->string('slider_text2')->nullable();
+            $table->string('slider_text2_value')->nullable();
+            $table->string('slider_text3')->nullable();
+            $table->string('slider_text3_value')->nullable();
+
 
             // Notification settings
             $table->boolean('send_new_deals')->default(true);

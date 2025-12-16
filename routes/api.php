@@ -15,14 +15,16 @@ use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\Coupon\CouponController as ApiCouponController;
 use App\Http\Controllers\Api\Deal\DealController as ApiDealController;
 use App\Http\Controllers\Api\Frontend\DealController;
-use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\Frontend\CouponController;
 use App\Http\Controllers\Api\Frontend\ContactMessageController;
 use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\Frontend\HomeController;
 use App\Http\Controllers\Api\Redemption\RedemptionController;
 use Illuminate\Support\Facades\Route;
 
 
+
+// website routes
 
 Route::get('/home', [HomeController::class, 'index']);
 Route::get('/deals', [DealController::class, 'index']);
@@ -45,7 +47,8 @@ Route::prefix('auth')->group(function () {
 Route::middleware(['auth:sanctum', 'role:business_admin'])->group(function () {
     Route::prefix('business')->group(function () {
 
-        Route::put('/profile', [BusinessController::class, 'update']);
+        Route::get('/profile', [BusinessController::class, 'getProfile']);
+        Route::put('/profile/{business}', [BusinessController::class, 'update']);
         Route::apiResource('deals', ApiDealController::class);
         Route::apiResource('coupons', ApiCouponController::class);
         Route::get('/redemptions', [RedemptionController::class, 'index']);
@@ -60,7 +63,7 @@ Route::middleware(['auth:sanctum', 'role:business_admin'])->group(function () {
 
 // Admin Routes
 Route::prefix('admin')
-    ->middleware(['auth:sanctum', 'role:business_admin'])
+    ->middleware(['auth:sanctum', 'role:superadmin'])
     ->group(function () {
 
         Route::get('/dashboard', [AdminDashboardController::class, 'index']);

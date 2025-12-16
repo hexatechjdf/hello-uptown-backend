@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\DealResource;
@@ -10,6 +10,7 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Helpers\ApiResponse;
 use App\Resources\Business\BusinessResource;
+use App\Resources\Deal\DealResource as DealDealResource;
 
 class HomeController extends Controller
 {
@@ -21,7 +22,7 @@ class HomeController extends Controller
             ->get();
 
         $topRatedPartners = Business::where('status', true)
-            ->orderByDesc('rating')
+            // ->orderByDesc('rating')
             ->take(4)
             ->get();
 
@@ -32,8 +33,9 @@ class HomeController extends Controller
 
         $browseCategories = Category::all();
 
-        $featuredBusinesses = Business::where('featured', true)
-            ->take(5)
+        $featuredBusinesses = Business::
+            // where('featured', true)
+            take(5)
             ->get();
 
         $contactUs = [
@@ -60,7 +62,7 @@ class HomeController extends Controller
         return ApiResponse::success([
             'carouselBusinesses' => BusinessResource::collection($carouselBusinesses),
             'topRatedPartners' => BusinessResource::collection($topRatedPartners),
-            'topDealsOfMonth' => DealResource::collection($topDealsOfMonth),
+            'topDealsOfMonth' => DealDealResource::collection($topDealsOfMonth),
             'browseCategories' => $browseCategories,
             'featuredBusinesses' => BusinessResource::collection($featuredBusinesses),
             'contactUs' => $contactUs,

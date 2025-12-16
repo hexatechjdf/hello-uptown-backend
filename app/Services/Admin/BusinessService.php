@@ -40,4 +40,8 @@ class BusinessService
 
         return $this->repo->update($business, $data);
     }
+    public function getByUserId($userId)
+    {
+        return $this->repo->findByField('user_id', $userId)->first();
+    }
 }

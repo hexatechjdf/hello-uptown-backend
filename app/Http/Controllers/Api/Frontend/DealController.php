@@ -4,10 +4,11 @@ namespace App\Http\Controllers\Api\Frontend;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Http\Resources\DealResource;
 use App\Helpers\ApiResponse;
-use App\Repositories\DealRepository;
-use App\Services\DealService;
+use App\Models\Deal;
+use App\Repositories\Deal\DealRepository;
+use App\Resources\Deal\DealResource;
+use App\Services\Deal\DealService;
 
 class DealController extends Controller
 {
@@ -45,17 +46,17 @@ class DealController extends Controller
 
         return ApiResponse::success([
             'deals' => DealResource::collection($deals),
-            'popularDeals' => DealResource::collection($popularDeals),
-            'expiringSoonDeals' => DealResource::collection($expiringSoonDeals),
+            'popularDeals' => 2,
+            'expiringSoonDeals' => 2,
+            'newDeals'  => 2,
         ], 'Deals retrieved successfully');
     }
 
     /**
      * Deal detail
      */
-    public function show($id)
+    public function show(Deal $deal)
     {
-        $deal = $this->repo->find($id);
         return ApiResponse::resource(new DealResource($deal));
     }
     public function dealOfTheWeek()
@@ -65,13 +66,10 @@ class DealController extends Controller
         if (!$mainDeal) {
             return ApiResponse::error('No deal of the week found', 404);
         }
-
-        // 2️⃣ Other 4 great deals (excluding main deal)
         $otherDeals = $this->repo->getOtherGreatDeals($mainDeal->id, 4);
-
         return ApiResponse::success([
-            'dealOfTheWeek' => new \App\Http\Resources\DealResource($mainDeal),
-            'otherGreatDeals' => \App\Http\Resources\DealResource::collection($otherDeals),
+            'dealOfTheWeek' => new DealResource($mainDeal),
+            'otherGreatDeals' => DealResource::collection($otherDeals),
         ], 'Deal of the week retrieved successfully');
     }
 }

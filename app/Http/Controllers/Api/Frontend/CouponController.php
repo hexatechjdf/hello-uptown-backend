@@ -4,10 +4,11 @@ namespace App\Http\Controllers\Api\Frontend;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Repositories\Coupon\CouponRepository;
 use App\Services\Coupon\CouponService;
-use App\Http\Resources\CouponResource;
 use App\Helpers\ApiResponse;
+use App\Models\Coupon;
+use App\Repositories\CouponRepository;
+use App\Resources\Coupon\CouponResource;
 
 class CouponController extends Controller
 {
@@ -57,9 +58,8 @@ class CouponController extends Controller
     /**
      * Show coupon details
      */
-    public function show($id)
+    public function show(Coupon $coupon)
     {
-        $coupon = $this->repo->find($id);
         return ApiResponse::resource(new CouponResource($coupon));
     }
 }

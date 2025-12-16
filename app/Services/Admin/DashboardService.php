@@ -13,7 +13,7 @@ class DashboardService
         return [
             'totalBusinesses' => Business::count(),
             'totalCoupons'    => Coupon::count(),
-            'publishedDeals'  => Deal::where('status', 'published')->count(),
+            'publishedDeals'  => Deal::count(),
         ];
     }
 }

@@ -31,4 +31,8 @@ class BusinessRepository
     {
         return $business->delete();
     }
+    public function findByField(string $field, $value)
+    {
+        return Business::where($field, $value)->with('user')->first();
+    }
 }

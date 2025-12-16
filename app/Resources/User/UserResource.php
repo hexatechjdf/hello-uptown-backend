@@ -17,12 +17,11 @@ class UserResource extends JsonResource
             'email'      => $this->email,
             'phone'      => $this->phone,
             'role'       => $this->roles->pluck('name')->first(),
-            'businessId' => $this->business->id ?? null,
             'avatar'     => $this->avatar ?? null,
             'createdAt'  => $this->created_at,
-            'business'   => $this->whenLoaded('business', function () {
-                return new BusinessResource($this->business);
-            }),
+            'businessId' => ($this->relationLoaded('business') && $this->business ? $this->business->id : null),
+            'business'    => $this->whenLoaded('business', fn() => new BusinessResource($this->business)),
+
         ];
     }
 }
