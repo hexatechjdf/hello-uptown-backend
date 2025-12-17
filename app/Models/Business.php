@@ -16,7 +16,7 @@ class Business extends Model
         'short_description',
         'long_description',
         'description',
-        'category',
+        'category_id',
         'tags',
         'logo',
         'cover_image',
@@ -41,6 +41,12 @@ class Business extends Model
         'image_overlay_heading2',
         'send_new_deals',
         'status',
+        'slider_text1',
+        'slider_text1_value',
+        'slider_text2',
+        'slider_text2_value',
+        'slider_text3',
+        'slider_text3_value',
     ];
 
     protected $casts = [
@@ -73,20 +79,20 @@ class Business extends Model
     public function getSliderSettingsAttribute()
     {
         return [
-            'tagline'             => $this->slider_tagline,
-            'sectionSliderText'   => $this->slider_section_text,
-            'headingOne'          => $this->slider_heading_one,
-            'subheading'          => $this->slider_subheading,
-            'shortDescription'    => $this->slider_short_description,
-            'imageUrl'            => $this->slider_image ? asset($this->slider_image) : null,
-            'imageOverlayHeading' => $this->image_overlay_heading,
-            'imageOverlayHeading2'=> $this->image_overlay_heading2,
-            'sliderText1'         => $this->slider_text1,
-            'sliderText1Value'    => $this->slider_text1_value,
-            'sliderText2'         => $this->slider_text2,
-            'sliderText2Value'    => $this->slider_text2_value,
-            'sliderText3'         => $this->slider_text3,
-            'sliderText3Value'    => $this->slider_text3_value,
+            'slider_tagline'             => $this->slider_tagline,
+            'slider_section_text'   => $this->slider_section_text,
+            'slider_heading_one'          => $this->slider_heading_one,
+            'slider_subheading'          => $this->slider_subheading,
+            'slider_short_description'    => $this->slider_short_description,
+            'slider_image'            => $this->slider_image,
+            'image_overlay_heading' => $this->image_overlay_heading,
+            'image_overlay_heading2'=> $this->image_overlay_heading2,
+            'slider_text1'         => $this->slider_text1,
+            'slider_text1_value'    => $this->slider_text1_value,
+            'slider_text2'         => $this->slider_text2,
+            'slider_text2_value'    => $this->slider_text2_value,
+            'slider_text3'         => $this->slider_text3,
+            'slider_text3_value'    => $this->slider_text3_value,
         ];
     }
 

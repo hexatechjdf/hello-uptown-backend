@@ -19,10 +19,9 @@ class DealService
     {
         $data['business_id'] = $businessId;
 
-        if (isset($data['image'])) {
-            $data['image'] = $data['image']->store('deals', 'public');
-        }
-
+        // if (isset($data['image'])) {
+        //     $data['image'] = $data['image']->store('deals', 'public');
+        // }
         return $this->repo->create($data);
     }
 

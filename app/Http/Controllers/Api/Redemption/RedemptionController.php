@@ -20,9 +20,6 @@ class RedemptionController extends Controller
     public function index(ListRedemptionRequest $request)
     {
         $result = $this->service->list($request->validated());
-        return ApiResponse::collection(
-            RedemptionResource::collection($result),
-            'Redemption list retrieved successfully'
-        );
+        return ApiResponse::collection(RedemptionResource::collection($result),'Redemption list retrieved successfully');
     }
 }

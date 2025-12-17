@@ -21,7 +21,7 @@ class RedemptionResource extends JsonResource
                 'email'      => $this->user->email,
             ],
             'discount_amount' => $this->discount_amount,
-            'redeemed_at'     => optional($this->redeemed_at)->toDateTimeString(),
+            'redeemed_at'     => $this->redeemed_at ?? null,
             'status'          => $this->status,
         ];
     }

@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\Admin\NewsController;
 use App\Http\Controllers\Api\Admin\NightlifeController;
 use App\Http\Controllers\Api\Admin\PorchfestController;
 use App\Http\Controllers\Api\Auth\AuthController;
+use App\Http\Controllers\Api\Category\CategoryController;
 use App\Http\Controllers\Api\Coupon\CouponController as ApiCouponController;
 use App\Http\Controllers\Api\Deal\DealController as ApiDealController;
 use App\Http\Controllers\Api\Frontend\DealController;
@@ -56,6 +57,10 @@ Route::prefix('auth')->group(function () {
     Route::post('register', [AuthController::class, 'register']);
     Route::post('login', [AuthController::class, 'login']);
     Route::middleware('auth:sanctum')->post('logout', [AuthController::class, 'logout']);
+     Route::post('forgot-password', [AuthController::class, 'forgotPassword']);
+    Route::post('reset-password', [AuthController::class, 'resetPassword']);
+    Route::get('validate-reset-token/{token}', [AuthController::class, 'validateResetToken']);
+
 });
 
 
