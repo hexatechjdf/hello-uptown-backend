@@ -1,25 +1,27 @@
 <?php
 
-namespace App\Http\Requests;
-
-use Illuminate\Foundation\Http\FormRequest;
-
+namespace App\Http\Requests\Website\ContactMessage;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Foundation\Http\FormRequest;
 
-class ForgotPasswordRequest extends FormRequest
+class UpdateContactMessageRequest extends FormRequest
 {
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
 
-    public function rules()
+    public function rules(): array
     {
         return [
-            'email' => 'required|email|exists:users,email'
+            'full_name' => 'sometimes|string|max:255',
+            'email' => 'sometimes|email|max:255',
+            'phone' => 'nullable|string|max:20',
+            'message' => 'sometimes|string|min:10|max:2000',
         ];
     }
+
 
     protected function failedValidation(Validator $validator)
     {

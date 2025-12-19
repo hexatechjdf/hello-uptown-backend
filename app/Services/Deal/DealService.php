@@ -18,27 +18,16 @@ class DealService
     public function create(array $data, $businessId)
     {
         $data['business_id'] = $businessId;
-
-        // if (isset($data['image'])) {
-        //     $data['image'] = $data['image']->store('deals', 'public');
-        // }
         return $this->repo->create($data);
     }
 
     public function update(Deal $deal, array $data)
     {
-        if (isset($data['image'])) {
-            if ($deal->image) Storage::disk('public')->delete($deal->image);
-            $data['image'] = $data['image']->store('deals', 'public');
-        }
-
         return $this->repo->update($deal, $data);
     }
 
     public function delete(Deal $deal)
     {
-        if ($deal->image) Storage::disk('public')->delete($deal->image);
-
         return $this->repo->delete($deal);
     }
 }

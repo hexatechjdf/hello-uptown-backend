@@ -19,11 +19,11 @@ class DealResource extends JsonResource
             'discount'          => $this->discount,
             'original_price'    => $this->original_price,
             'category_id'       => $this->category_id,
-            'is_featured'       => $this->is_featured,
+            'is_featured'       => $this->is_featured == 1,
             'valid_from'        => $this->valid_from,
             'valid_until'       => $this->valid_until,
             'terms_conditions'  => $this->terms_conditions,
-            'status'            => $this->status,
+            'status'            => $this->status == 1,
             'created_at'        => $this->created_at,
         ];
     }

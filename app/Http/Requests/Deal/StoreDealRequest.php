@@ -2,9 +2,10 @@
 
 namespace App\Http\Requests\Deal;
 
+use App\Helpers\ImageHelper;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Support\Facades\Http;
+
 
 class StoreDealRequest extends FormRequest
 {
@@ -27,46 +28,17 @@ class StoreDealRequest extends FormRequest
     }
 
     public function withValidator(Validator $validator)
-{
-    $validator->after(function ($validator) {
+    {
+        $validator->after(function ($validator) {
 
-        if (!$this->filled('image')) {
-            return;
-        }
-
-        try {
-            $response = Http::timeout(5)->get($this->image);
-            if (!$response->successful()) {
-                $validator->errors()->add('image', 'Unable to download image from the provided URL.');
+            if (!$this->filled('image')) {
                 return;
             }
-            $tempPath = tempnam(sys_get_temp_dir(), 'deal_img_');
-            file_put_contents($tempPath, $response->body());
-
-            $imageInfo = getimagesize($tempPath);
-
-            if ($imageInfo === false) {
-                unlink($tempPath);
-                $validator->errors()->add('image', 'The provided URL does not contain a valid image.');
-                return;
+            $error = ImageHelper::validateImageDimensions($this->image,5306,3770);
+            if ($error) {
+                $validator->errors()->add('image', $error);
             }
-
-            [$width, $height] = $imageInfo;
-
-            // REQUIRED DIMENSIONS
-            $requiredWidth  = 5306;
-            $requiredHeight = 3770;
-
-            if ($width !== $requiredWidth || $height !== $requiredHeight) {
-                $validator->errors()->add('image',"Image dimensions must be {$requiredWidth}x{$requiredHeight}px.");
-            }
-            // unlink($tempPath);
-
-        } catch (\Exception $e) {
-            $validator->errors()->add('image', 'Failed to validate image from the provided URL.');
-        }
-    });
-}
-
+        });
+    }
 
 }

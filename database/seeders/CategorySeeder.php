@@ -16,18 +16,36 @@ class CategorySeeder extends Seeder
     public function run()
     {
         $categories = [
-            'Restaurant',
-            'Salon & Spa',
-            'Fitness',
-            'Entertainment',
-            'Automotive',
-            'Retail',
+            [
+                'name' => 'Restaurant',
+                'image' => 'https://images.pexels.com/photos/326055/pexels-photo-326055.jpeg'
+            ],
+            [
+                'name' => 'Salon & Spa',
+                'image' => 'https://images.pexels.com/photos/1133957/pexels-photo-1133957.jpeg'
+            ],
+            [
+                'name' => 'Fitness',
+                'image' => 'https://images.pexels.com/photos/206359/pexels-photo-206359.jpeg'
+            ],
+            [
+                'name' => 'Entertainment',
+                'image' => 'https://images.pexels.com/photos/45853/grey-crowned-crane-bird-crane-animal-45853.jpeg'
+            ],
+            [
+                'name' => 'Automotive',
+                'image' => 'https://images.pexels.com/photos/906150/pexels-photo-906150.jpeg'
+            ],
+            [
+                'name' => 'Retail',
+                'image' => 'https://images.pexels.com/photos/593655/pexels-photo-593655.jpeg'
+            ],
         ];
-
-        foreach ($categories as $categoryName) {
+        foreach ($categories as $category) {
             Category::create([
-                'name' => $categoryName,
-                'slug' => Str::slug($categoryName),
+                'name' => $category['name'],
+                'slug' => Str::slug($category['name']),
+                'image' => $category['image'],
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);

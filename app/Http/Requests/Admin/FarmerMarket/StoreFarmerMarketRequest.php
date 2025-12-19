@@ -1,6 +1,9 @@
 <?php
 namespace App\Http\Requests\Admin\FarmerMarket;
 
+use App\Helpers\ImageHelper;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Foundation\Http\FormRequest;
 class StoreFarmerMarketRequest extends FormRequest
 {
@@ -12,7 +15,7 @@ class StoreFarmerMarketRequest extends FormRequest
             'heading' => 'required|string|max:255',
             'subheading' => 'nullable|string|max:255',
             'description' => 'nullable|string',
-            'image' => 'nullable|image|max:4096',
+            'image'             => 'nullable|url',
             'available_vendors' => 'nullable|integer',
             'tags' => 'nullable|array',
             'sub_tags' => 'nullable|array',
@@ -29,6 +32,30 @@ class StoreFarmerMarketRequest extends FormRequest
             'status' => 'required|in:draft,scheduled,active,expired',
         ];
     }
+
+
+     public function withValidator(Validator $validator)
+    {
+        $validator->after(function ($validator) {
+
+            if (!$this->filled('image')) {
+                return;
+            }
+            $error = ImageHelper::validateImageDimensions($this->image,5306,3770);
+            if ($error) {
+                $validator->errors()->add('image', $error);
+            }
+        });
+    }
+        protected function failedValidation(Validator $validator)
+{
+    throw new HttpResponseException(response()->json([
+        'status' => false,
+        'message' => 'Validation error',
+        'errors' => $validator->errors()
+    ], 422));
+}
+
 }
 
 ?>

@@ -1,8 +1,9 @@
 <?php
 
 namespace App\Http\Requests\Deal;
-
+use App\Helpers\ImageHelper;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
 
 class UpdateDealRequest extends FormRequest
 {
@@ -12,7 +13,7 @@ class UpdateDealRequest extends FormRequest
             'title'             => 'sometimes|string|max:255',
             'short_description' => 'nullable|string|max:255',
             'long_description'  => 'nullable|string',
-            'image'             => 'nullable|image|max:2048',
+             'image'             => 'nullable|url',
             'discount'          => 'sometimes|numeric|min:0',
             'original_price'    => 'nullable|numeric|min:0',
             'category_id'       => 'nullable|exists:categories,id',
@@ -22,5 +23,19 @@ class UpdateDealRequest extends FormRequest
             'is_featured'       => 'boolean',
             'status'            => 'boolean',
         ];
+    }
+
+     public function withValidator(Validator $validator)
+    {
+        $validator->after(function ($validator) {
+
+            if (!$this->filled('image')) {
+                return;
+            }
+            $error = ImageHelper::validateImageDimensions($this->image,5306,3770);
+            if ($error) {
+                $validator->errors()->add('image', $error);
+            }
+        });
     }
 }

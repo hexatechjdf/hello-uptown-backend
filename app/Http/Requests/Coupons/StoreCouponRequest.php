@@ -3,7 +3,8 @@
 namespace App\Http\Requests\Coupons;
 
 use Illuminate\Foundation\Http\FormRequest;
-
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 class StoreCouponRequest extends FormRequest
 {
     public function authorize(): bool
@@ -35,5 +36,13 @@ class StoreCouponRequest extends FormRequest
 
             'is_active' => 'boolean',
         ];
+    }
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->json([
+            'status' => false,
+            'message' => 'Validation error',
+            'errors' => $validator->errors()
+        ], 422));
     }
 }

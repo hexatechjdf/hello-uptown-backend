@@ -20,6 +20,7 @@ class PasswordResetService
         }
         $encryptedUserId = Crypt::encryptString($user->id);
         $resetUrl = "http://localhost:3000/reset-password?token=".$encryptedUserId;
+        return $resetUrl;
         Mail::to($user->email)->send(new PasswordResetMail($resetUrl, $user));
 
         return true;

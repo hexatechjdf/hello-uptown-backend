@@ -1,8 +1,11 @@
 <?php
 
 namespace App\Http\Requests\Admin\ArtFair;
-use Illuminate\Foundation\Http\FormRequest;
 
+use App\Helpers\ImageHelper;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 class ArtFairRequest extends FormRequest
 {
     public function authorize(): bool
@@ -15,7 +18,7 @@ class ArtFairRequest extends FormRequest
         return [
             'heading'           => 'required|string|max:255',
             'description'       => 'nullable|string',
-            'image'             => 'nullable|image|max:4096',
+            'image'             => 'nullable|url',
             'available_artist'  => 'nullable|integer',
             'art_categories'    => 'nullable|array',
             'event_features'    => 'nullable|array',
@@ -31,4 +34,27 @@ class ArtFairRequest extends FormRequest
             'status'            => 'required|in:draft,scheduled,active,expired',
         ];
     }
+
+
+     public function withValidator(Validator $validator)
+    {
+        $validator->after(function ($validator) {
+
+            if (!$this->filled('image')) {
+                return;
+            }
+            $error = ImageHelper::validateImageDimensions($this->image,5306,3770);
+            if ($error) {
+                $validator->errors()->add('image', $error);
+            }
+        });
+    }
+        protected function failedValidation(Validator $validator)
+        {
+            throw new HttpResponseException(response()->json([
+                'status' => false,
+                'message' => 'Validation error',
+                'errors' => $validator->errors()
+            ], 422));
+        }
 }

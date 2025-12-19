@@ -1,4 +1,8 @@
 <?php
+header('Access-Control-Allow-Origin: *');
+header("Access-Control-Expose-Headers: *");
+header("Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS");
+header("Access-Control-Allow-Headers: *");
 
 use App\Http\Controllers\Api\Admin\ArtFairController;
 use App\Http\Controllers\Api\Admin\BusinessController;
@@ -20,8 +24,8 @@ use App\Http\Controllers\Api\Frontend\CouponController;
 use App\Http\Controllers\Api\Frontend\ContactMessageController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\Frontend\HomeController;
+use App\Http\Controllers\Api\Frontend\SubscribrNewsLetterController;
 use App\Http\Controllers\Api\Redemption\RedemptionController;
-use App\Models\Role;
 use Illuminate\Support\Facades\Route;
 
 
@@ -35,13 +39,15 @@ Route::prefix('home')->group(function () {
     Route::get('/carousel-businesses', [HomeController::class, 'carouselBusinesses']);
     Route::get('/top-rated-partners', [HomeController::class, 'topRatedPartners']);
     Route::get('/top-deals-of-month', [HomeController::class, 'topDealsOfMonth']);
-    Route::get('/all-deals', [HomeController::class, 'allDeals']);
-    Route::get('/deal/{id}', [HomeController::class, 'getDeal']);
     Route::get('/browse-categories', [HomeController::class, 'browseCategories']);
     Route::get('/featured-businesses', [HomeController::class, 'featuredBusinesses']);
     Route::get('/contact-us', [HomeController::class, 'contactUs']);
     Route::get('/newsletter', [HomeController::class, 'newsletter']);
     Route::get('/footer', [HomeController::class, 'footer']);
+    Route::post('/contact-message', [ContactMessageController::class, 'store']);
+    Route::post('newsletter-subscribe', [SubscribrNewsLetterController::class, 'subscribe']);
+    Route::get('/all-deals', [HomeController::class, 'allDeals']);
+    Route::get('/deal/{id}', [HomeController::class, 'getDeal']);
 });
 
 Route::get('/deals', [DealController::class, 'index']);
@@ -74,6 +80,7 @@ Route::middleware(['auth:sanctum', 'role:business_admin'])->group(function () {
         Route::put('/profile/{business}', [BusinessController::class, 'update']);
         Route::apiResource('deals', ApiDealController::class);
         Route::apiResource('coupons', ApiCouponController::class);
+        Route::apiResource('categories', CategoryController::class);
         Route::get('/redemptions', [RedemptionController::class, 'index']);
 
         Route::prefix('/dashboard')->group(function () {

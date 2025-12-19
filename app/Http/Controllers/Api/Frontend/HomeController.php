@@ -26,6 +26,22 @@ class HomeController extends Controller
         // ->orderByDesc('rating')
         return ApiResponse::collection(BusinessResource::collection($businesses),'Top rated partners fetched successfully');
     }
+    public function topDealsOfMonth()
+    {
+        $deals = Deal::where('status', true)->whereMonth('created_at', now()->month)->take(5)->get();
+        return ApiResponse::collection(DealDealResource::collection($deals),'Top deals of the month fetched successfully');
+    }
+    public function browseCategories()
+    {
+        $categories = Category::all();
+
+        return ApiResponse::collection(
+            $categories,
+            'Categories fetched successfully'
+        );
+    }
+
+
     public function allDeals(Request $request)
     {
         $search = $request->input('search'); // Get search query from request
@@ -45,7 +61,7 @@ class HomeController extends Controller
         return ApiResponse::collection(DealDealResource::collection($deals), 'All deals fetched successfully');
     }
 
-   public function getDeal($id)
+    public function getDeal($id)
     {
         $deal = Deal::where('id', $id)->where('status', true)->first();
 
@@ -56,39 +72,23 @@ class HomeController extends Controller
         // Wrap single deal in a collection for ApiResponse::collection
         return ApiResponse::collection(DealDealResource::collection(collect([$deal])), 'Deal fetched successfully');
     }
-
-    public function topDealsOfMonth()
-    {
-        $deals = Deal::where('status', true)->whereMonth('created_at', now()->month)->take(5)->get();
-        return ApiResponse::collection(DealDealResource::collection($deals),'Top deals of the month fetched successfully');
-    }
-    public function browseCategories()
-    {
-        $categories = Category::all();
-
-        return ApiResponse::collection(
-            $categories,
-            'Categories fetched successfully'
-        );
-    }
     public function featuredBusinesses()
     {
-        $businesses = Business::
-            // where('featured', true)
-            take(5)
-            ->get();
-
-        return ApiResponse::collection(
-            BusinessResource::collection($businesses),
-            'Featured businesses fetched successfully'
-        );
+        $businesses = Business::take(5)->get();
+        // where('featured', true)
+        return ApiResponse::collection(BusinessResource::collection($businesses),'Featured businesses fetched successfully');
     }
     public function contactUs()
     {
         $contactUs = [
             'email' => config('site.contact_email', 'info@hellouptown.com'),
             'phone' => config('site.contact_phone', '+1 234 567 890'),
-            'address' => config('site.contact_address', '123 Main Street'),
+            'address' => config('site.contact_address', '123 Main Street
+            Downtown District
+            City, State 12345'),
+            'business_hours' => config('site.business_hours', 'Mon - Fri: 9:00 AM - 6:00 PM
+            Sat: 10:00 AM - 4:00 PM
+            Sun: Closed'),
         ];
         return ApiResponse::success(
             $contactUs,
@@ -125,9 +125,6 @@ class HomeController extends Controller
     public function GetMyInfo(Request $request)
     {
         $user  = $request->user();
-        return ApiResponse::resource(
-            new UserResource($user),
-            'User Fetched Successfully'
-        );
+        return ApiResponse::resource(new UserResource($user),'User Fetched Successfully');
     }
 }

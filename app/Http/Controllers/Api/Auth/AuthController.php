@@ -58,8 +58,8 @@ class AuthController extends Controller
     {
         try {
             $validated = $request->validated();
-            $this->passwordResetService->sendResetLink($validated['email']);
-        return ApiResponse::success(null, 'Password reset link has been sent to your email. Please check your inbox and follow the instructions.');
+            $resp = $this->passwordResetService->sendResetLink($validated['email']);
+        return ApiResponse::success($resp, 'Password reset link has been sent to your email. Please check your inbox and follow the instructions.');
         } catch (\Exception $e) {
             return ApiResponse::error(
                 'Failed to send reset link. Please try again later.' . $e->getMessage(),

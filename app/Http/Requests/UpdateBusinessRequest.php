@@ -1,5 +1,7 @@
 <?php
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 class UpdateBusinessRequest extends FormRequest
 {
      public function authorize(): bool
@@ -23,6 +25,14 @@ class UpdateBusinessRequest extends FormRequest
             'text3' => 'nullable|string',
             'value3' => 'nullable|string',
         ];
+    }
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->json([
+            'status' => false,
+            'message' => 'Validation error',
+            'errors' => $validator->errors()
+        ], 422));
     }
 }
 

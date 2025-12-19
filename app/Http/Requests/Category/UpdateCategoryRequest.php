@@ -4,10 +4,10 @@ namespace App\Http\Requests;
 
 use App\Helpers\ImageHelper;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
-
-class NewsRequest extends FormRequest
+class UpdateCategoryRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -16,25 +16,27 @@ class NewsRequest extends FormRequest
 
     public function rules(): array
     {
+        $categoryId = $this->route('category')->id;
+
         return [
-            'heading' => 'required|string|max:255',
-            'subheading' => 'nullable|string|max:255',
-            'description' => 'nullable|string',
+            'name' => [
+                'sometimes',
+                'string',
+                'max:255',
+                Rule::unique('categories', 'name')->ignore($categoryId)
+            ],
+            'slug' => [
+                'sometimes',
+                'string',
+                'max:255',
+                Rule::unique('categories', 'slug')->ignore($categoryId),
+                'regex:/^[a-z0-9]+(?:-[a-z0-9]+)*$/'
+            ],
              'image'             => 'nullable|url',
-            'available_attendees' => 'nullable|integer|min:0',
-            'address' => 'nullable|string|max:255',
-            'latitude' => 'nullable|numeric',
-            'longitude' => 'nullable|numeric',
-            'website' => 'nullable|url|max:255',
-            'date' => 'nullable|date',
-            'day' => 'nullable|string|max:20',
-            'start_time' => 'nullable|date_format:H:i',
-            'end_time' => 'nullable|date_format:H:i',
-            'status' => 'nullable|in:active,draft,expired',
         ];
     }
 
-     public function withValidator(Validator $validator)
+    public function withValidator(Validator $validator)
     {
         $validator->after(function ($validator) {
 
