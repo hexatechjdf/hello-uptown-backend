@@ -28,14 +28,14 @@ class HomeController extends Controller
         );
     }
     public function topRatedPartners()
-    {
+    { 
         $businesses = Business::where('status', true)
             // ->orderByDesc('rating')
             ->take(4)
             ->get();
 
         return ApiResponse::collection(
-            BusinessResource::collection($businesses), 
+            BusinessResource::collection($businesses),
             'Top rated partners fetched successfully'
         );
     }
