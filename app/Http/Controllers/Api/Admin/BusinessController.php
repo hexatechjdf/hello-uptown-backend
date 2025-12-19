@@ -84,7 +84,7 @@ class BusinessController extends Controller
             'instagram_link' => 'sometimes|url',
             'twitter_link' => 'sometimes|url',
             'redemption_radius' => 'sometimes|integer',
-        ]);
+        ]); 
 
         $updated = $this->service->update($business, $data);
         $business->refresh();
