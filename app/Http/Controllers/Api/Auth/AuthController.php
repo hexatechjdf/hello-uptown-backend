@@ -8,17 +8,23 @@ use App\Services\Auth\LoginService;
 use Illuminate\Http\Request;
 use App\Services\Auth\RegisterService;
 use App\Helpers\ApiResponse;
+use App\Http\Requests\ForgotPasswordRequest;
 use App\Http\Requests\RegisterUserRequest;
+use App\Http\Requests\ResetPasswordRequest;
+use App\Services\Auth\PasswordResetService;
+use Illuminate\Support\Facades\Crypt;
 
 class AuthController extends Controller
 {
     protected $registerService;
     protected $loginService;
+    protected $passwordResetService;
 
-    public function __construct(RegisterService $registerService, LoginService $loginService)
+    public function __construct(RegisterService $registerService, LoginService $loginService, PasswordResetService $passwordResetService)
     {
         $this->registerService = $registerService;
         $this->loginService = $loginService;
+        $this->passwordResetService = $passwordResetService;
     }
     public function register(RegisterUserRequest $request)
     {
@@ -46,7 +52,33 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
-
         return response()->json(['message' => 'Logged out successfully']);
+    }
+    public function forgotPassword(ForgotPasswordRequest $request)
+    {
+        try {
+            $validated = $request->validated();
+            $this->passwordResetService->sendResetLink($validated['email']);
+        return ApiResponse::success(null, 'Password reset link has been sent to your email. Please check your inbox and follow the instructions.');
+        } catch (\Exception $e) {
+            return ApiResponse::error(
+                'Failed to send reset link. Please try again later.' . $e->getMessage(),
+                null,
+                500
+            );
+        }
+    }
+    public function resetPassword(ResetPasswordRequest $request)
+    {
+        try {
+            $validated = $request->validated();
+            $decryptedUserId = Crypt::decryptString($validated["token"]);
+            $this->passwordResetService->resetPassword($decryptedUserId,$validated['password']);
+
+        return ApiResponse::success(null, 'Password has been reset successfully. You can now login with your new password.');
+
+        } catch (\Exception $e) {
+            return ApiResponse::error('Failed to reset password. Please try again - '. $e->getMessage(),null,500);
+        }
     }
 }

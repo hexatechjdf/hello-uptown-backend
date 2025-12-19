@@ -9,7 +9,7 @@ use App\Models\Deal;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Helpers\ApiResponse;
-use App\Resources\Business\BusinessResource;
+use App\Resources\Website\BusinessResource;
 use App\Resources\Deal\DealResource as DealDealResource;
 use App\Resources\User\UserResource;
 
@@ -17,27 +17,14 @@ class HomeController extends Controller
 {
     public function carouselBusinesses()
     {
-        $businesses = Business::where('status', true)
-            ->orderByDesc('created_at')
-            ->take(5)
-            ->get();
-
-        return ApiResponse::collection(
-            BusinessResource::collection($businesses),
-            'Carousel businesses fetched successfully'
-        );
+        $businesses = Business::where('status', true)->orderByDesc('created_at')->take(5)->get();
+        return ApiResponse::collection(BusinessResource::collection($businesses),'Carousel businesses fetched successfully');
     }
     public function topRatedPartners()
-    { 
-        $businesses = Business::where('status', true)
-            // ->orderByDesc('rating')
-            ->take(4)
-            ->get();
-
-        return ApiResponse::collection(
-            BusinessResource::collection($businesses),
-            'Top rated partners fetched successfully'
-        );
+    {
+        $businesses = Business::where('status', true)->take(4)->get();
+        // ->orderByDesc('rating')
+        return ApiResponse::collection(BusinessResource::collection($businesses),'Top rated partners fetched successfully');
     }
     public function allDeals(Request $request)
     {
@@ -72,15 +59,8 @@ class HomeController extends Controller
 
     public function topDealsOfMonth()
     {
-        $deals = Deal::where('status', true)
-            ->whereMonth('created_at', now()->month)
-            ->take(5)
-            ->get();
-
-        return ApiResponse::collection(
-            DealDealResource::collection($deals),
-            'Top deals of the month fetched successfully'
-        );
+        $deals = Deal::where('status', true)->whereMonth('created_at', now()->month)->take(5)->get();
+        return ApiResponse::collection(DealDealResource::collection($deals),'Top deals of the month fetched successfully');
     }
     public function browseCategories()
     {
