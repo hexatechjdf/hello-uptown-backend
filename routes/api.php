@@ -34,6 +34,8 @@ Route::prefix('home')->group(function () {
     Route::get('/carousel-businesses', [HomeController::class, 'carouselBusinesses']);
     Route::get('/top-rated-partners', [HomeController::class, 'topRatedPartners']);
     Route::get('/top-deals-of-month', [HomeController::class, 'topDealsOfMonth']);
+    Route::get('/all-deals', [HomeController::class, 'allDeals']);
+    Route::get('/deal/{id}', [HomeController::class, 'getDeal']);
     Route::get('/browse-categories', [HomeController::class, 'browseCategories']);
     Route::get('/featured-businesses', [HomeController::class, 'featuredBusinesses']);
     Route::get('/contact-us', [HomeController::class, 'contactUs']);
