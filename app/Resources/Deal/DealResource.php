@@ -11,6 +11,7 @@ class DealResource extends JsonResource
         return [
             'id'                => $this->id,
             'business_id'       => $this->business_id,
+            'business_logo'       => $this->business?->logo ?? null,
             'title'             => $this->title,
             'short_description' => $this->short_description,
             'long_description'  => $this->long_description,
