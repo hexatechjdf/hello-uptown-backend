@@ -37,7 +37,7 @@ class HomeController extends Controller
         return ApiResponse::collection(
             BusinessResource::collection($businesses),
             'Top rated partners fetched successfully'
-        );
+        ); 
     }
     public function allDeals(Request $request)
     {
