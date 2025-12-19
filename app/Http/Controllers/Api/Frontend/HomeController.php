@@ -35,10 +35,10 @@ class HomeController extends Controller
             ->get();
 
         return ApiResponse::collection(
-            BusinessResource::collection($businesses),
+            BusinessResource::collection($businesses), 
             'Top rated partners fetched successfully'
         );
-    } 
+    }
     public function allDeals(Request $request)
     {
         $search = $request->input('search'); // Get search query from request
