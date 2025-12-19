@@ -5,7 +5,7 @@ namespace App\Resources\Business;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class BusinessResource extends JsonResource
-{
+{ 
     public function toArray($request)
     {
         return [
