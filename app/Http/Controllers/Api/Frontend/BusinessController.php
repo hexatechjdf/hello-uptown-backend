@@ -6,7 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Repositories\Business\BusinessRepository;
 use App\Services\Business\BusinessService;
-use App\Http\Resources\BusinessResource;
+use App\Resources\Website\BusinessResource;
+use App\Models\Business;
 use App\Helpers\ApiResponse;
 
 class BusinessController extends Controller
@@ -27,11 +28,10 @@ class BusinessController extends Controller
     {
         $filters = [
             'search' => $request->input('search'),
-            'category' => $request->input('category'),
+            'category_id' => $request->input('category_id'),
             'filter' => $request->input('filter'), // featured, mostPopular, newest
             'status' => $request->input('status'), // active, inactive
         ];
-
         $sort = $request->input('sort', 'created_at');
         $order = $request->input('order', 'desc');
         $perPage = $request->input('perPage', 10);
@@ -54,6 +54,13 @@ class BusinessController extends Controller
      */
     public function show($id)
     {
+          $Business = Business::where('id', $id)->where('status', true)->first();
+        if (!$Business) {
+            return ApiResponse::error('Business not found', 404);
+        }
+        return ApiResponse::collection(BusinessResource::collection(collect([$Business])), 'Business fetched successfully');
+
+
         $business = $this->repo->find($id);
         return ApiResponse::resource(new BusinessResource($business));
     }

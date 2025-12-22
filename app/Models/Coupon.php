@@ -33,4 +33,9 @@ class Coupon extends Model
     {
         return $this->belongsTo(Business::class);
     }
+
+    public function redemptions()
+{
+    return $this->hasMany(Redemption::class);
+}
 }

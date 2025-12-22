@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Resources\Admin\Dining;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 

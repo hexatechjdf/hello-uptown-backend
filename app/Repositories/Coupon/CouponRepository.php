@@ -1,11 +1,19 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Repositories\Coupon;
 
 use App\Models\Coupon;
 
 class CouponRepository
 {
+
+     protected $model;
+
+    public function __construct(Coupon $coupon)
+    {
+        $this->model = $coupon;
+    }
+
     public function search(array $filters, int $businessId)
     {
         return Coupon::where('business_id', $businessId)
@@ -35,7 +43,9 @@ class CouponRepository
     }
     public function all($filters = [], $sort = 'created_at', $order = 'desc', $perPage = 10)
     {
-        $query = $this->model->query()->where('status', true);
+        $query = $this->model->query()
+        ->where('is_active', true)
+        ;
 
         if (!empty($filters['search'])) {
             $query->where('title', 'like', "%{$filters['search']}%")
@@ -74,7 +84,8 @@ class CouponRepository
      */
     public function countAvailableCoupons()
     {
-        return $this->model->where('status', true)
+        return $this->model
+        ->where('is_active', true)
             ->whereRaw('valid_until >= NOW()')
             ->count();
     }
@@ -84,7 +95,8 @@ class CouponRepository
      */
     public function countExpiringSoonCoupons()
     {
-        return $this->model->where('status', true)
+        return $this->model
+        ->where('is_active', true)
             ->whereBetween('valid_until', [now(), now()->addDays(7)])
             ->count();
     }
@@ -94,7 +106,8 @@ class CouponRepository
      */
     public function countNewCoupons()
     {
-        return $this->model->where('status', true)
+        return $this->model
+        ->where('is_active', true)
             ->whereBetween('created_at', [now()->subDays(7), now()])
             ->count();
     }

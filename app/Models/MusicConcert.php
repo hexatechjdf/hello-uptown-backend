@@ -18,7 +18,7 @@ class MusicConcert extends Model
         'address',
         'latitude',
         'longitude',
-        'place_id',
+        // 'place_id',
         'website',
         'status',
         'event_date',
@@ -26,7 +26,7 @@ class MusicConcert extends Model
 
     protected $casts = [
         'event_date' => 'date',
-        'latitude'   => 'decimal:7',
-        'longitude'  => 'decimal:7',
+        'latitude'   => 'decimal:2',
+        'longitude'  => 'decimal:2',
     ];
 }

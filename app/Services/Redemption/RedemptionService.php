@@ -3,36 +3,43 @@
 namespace App\Services\Redemption;
 
 use App\Models\Redemption;
+use Carbon\Carbon;
 
 class RedemptionService
 {
     public function list(array $filters)
     {
-        $query = Redemption::with(['coupon:id,title,coupon_code', 'user:id,first_name,last_name,email']);
-
-        // 🔍 Search (coupon title or coupon code)
+        $query = Redemption::with([
+            'coupon:id,title,coupon_code',
+            'user:id,first_name,last_name,email'
+        ]);
         if (!empty($filters['search'])) {
-            $query->whereHas('coupon', function ($q) use ($filters) {
-                $q->where('title', 'LIKE', "%{$filters['search']}%")
-                    ->orWhere('coupon_code', 'LIKE', "%{$filters['search']}%");
+            $search = $filters['search'];
+            $query->whereHas('coupon', function ($q) use ($search) {
+                $q->where('title', 'LIKE', "%{$search}%")
+                  ->orWhere('coupon_code', 'LIKE', "%{$search}%");
             });
         }
-
-        // 🎯 Filter by status
         if (!empty($filters['status'])) {
             $query->where('status', $filters['status']);
         }
 
-        // 🎟 Filter by coupon
         if (!empty($filters['coupon_id'])) {
             $query->where('coupon_id', $filters['coupon_id']);
         }
-
-        // 🔽 Sorting
-        $sortBy = $filters['sort_by'] ?? 'id';
-        $sortOrder = $filters['sort_order'] ?? 'desc';
-
-        $query->orderBy($sortBy, $sortOrder);
+        if (!empty($filters['time']) && $filters['time'] !== 'all') {
+            match ($filters['time']) {
+                'today' => $query->whereDate('created_at', Carbon::today()),
+                'this_week' => $query->whereBetween('created_at', [
+                    Carbon::now()->startOfWeek(),
+                    Carbon::now()->endOfWeek(),
+                ]),
+                'this_month' => $query->whereMonth('created_at', Carbon::now()->month)
+                                      ->whereYear('created_at', Carbon::now()->year),
+                default => null
+            };
+        }
+        $query->orderBy('redeemed_at',($filters['sort'] ?? 'newest') === 'oldest' ? 'asc' : 'desc');
 
         return $query->paginate($filters['per_page'] ?? 20);
     }

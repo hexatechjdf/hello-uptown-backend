@@ -15,7 +15,7 @@ class DealResource extends JsonResource
             'title'             => $this->title,
             'short_description' => $this->short_description,
             'long_description'  => $this->long_description,
-            'image'             => $this->image ? asset('storage/' . $this->image) : null,
+            'image'             => $this->image,
             'discount'          => $this->discount,
             'original_price'    => $this->original_price,
             'category_id'       => $this->category_id,

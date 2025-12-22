@@ -1,7 +1,6 @@
 <?php
 
-
-namespace App\Http\Requests;
+namespace App\Http\Requests\Admin\Dining;
 
 use App\Helpers\ImageHelper;
 use Illuminate\Foundation\Http\FormRequest;
@@ -20,7 +19,7 @@ class DiningRequest extends FormRequest
         return [
             'heading' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'image'             => 'nullable|url',
+            'image' => 'nullable|url',
             'tags' => 'nullable|array',
             'tags.*' => 'string|max:50',
             'contact_number' => 'nullable|string|max:20',
@@ -35,18 +34,18 @@ class DiningRequest extends FormRequest
             'status' => 'nullable|in:active,draft,expired',
         ];
     }
+
     public function withValidator(Validator $validator)
     {
-        $validator->after(function ($validator) {
-
-            if (!$this->filled('image')) {
-                return;
-            }
-            $error = ImageHelper::validateImageDimensions($this->image,5306,3770);
-            if ($error) {
-                $validator->errors()->add('image', $error);
-            }
-        });
+        // $validator->after(function ($validator) {
+        //     if (!$this->filled('image')) {
+        //         return;
+        //     }
+        //     $error = ImageHelper::validateImageDimensions($this->image, 5306, 3770);
+        //     if ($error) {
+        //         $validator->errors()->add('image', $error);
+        //     }
+        // });
     }
 
     protected function failedValidation(Validator $validator)
@@ -58,5 +57,3 @@ class DiningRequest extends FormRequest
         ], 422));
     }
 }
-
-?>

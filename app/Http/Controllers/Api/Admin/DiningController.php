@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\DiningRequest;
-use App\Http\Resources\DiningResource;
+use App\Http\Requests\Admin\Dining\DiningRequest;
+use App\Resources\Admin\Dining\DiningResource;
 use App\Services\Admin\Dining\DiningService;
 use App\Models\Dining;
 use App\Helpers\ApiResponse;
@@ -21,11 +21,11 @@ class DiningController extends Controller
 
     public function index(Request $request)
     {
-        $dinings = $this->service->repo->all(
-            $request->only(['search','status']),
-            $request->get('sort','date'),
-            $request->get('order','desc'),
-            $request->get('perPage',10)
+        $dinings = $this->service->getAll(
+            $request->only(['search', 'status']),
+            $request->get('sort', 'date'),
+            $request->get('order', 'desc'),
+            $request->get('perPage', 10)
         );
 
         return ApiResponse::collection(DiningResource::collection($dinings), 'Dining list retrieved');
@@ -39,21 +39,21 @@ class DiningController extends Controller
 
     public function show($id)
     {
-        $dining = $this->service->repo->find($id);
+        $dining = $this->service->find($id);
         return ApiResponse::resource(new DiningResource($dining));
     }
 
     public function update(DiningRequest $request, $id)
     {
-        $dining = $this->service->repo->find($id);
+        $dining = $this->service->find($id);
         $dining = $this->service->update($dining, $request->all());
         return ApiResponse::resource(new DiningResource($dining), 'Dining updated successfully');
     }
 
-    public function destroy($id)
+     public function destroy($id)
     {
-        $dining = $this->service->repo->find($id);
-        $this->service->repo->delete($dining);
+        $dining = $this->service->find($id);
+        $dining->delete();
         return ApiResponse::success(null, 'Dining deleted successfully');
     }
 }

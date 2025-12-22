@@ -6,6 +6,7 @@ header("Access-Control-Allow-Headers: *");
 
 use App\Http\Controllers\Api\Admin\ArtFairController;
 use App\Http\Controllers\Api\Admin\BusinessController;
+use App\Http\Controllers\Api\Frontend\BusinessController as FrontendBusinessController;
 use App\Http\Controllers\Api\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Api\Admin\DiningController;
 use App\Http\Controllers\Api\Admin\FarmerMarketController;
@@ -44,20 +45,26 @@ Route::prefix('home')->group(function () {
     Route::get('/contact-us', [HomeController::class, 'contactUs']);
     Route::get('/newsletter', [HomeController::class, 'newsletter']);
     Route::get('/footer', [HomeController::class, 'footer']);
-    Route::post('/contact-message', [ContactMessageController::class, 'store']);
-    Route::post('newsletter-subscribe', [SubscribrNewsLetterController::class, 'subscribe']);
-    Route::get('/all-deals', [HomeController::class, 'allDeals']);
-    Route::get('/deal/{id}', [HomeController::class, 'getDeal']);
+
+    // Route::get('/all-deals', [HomeController::class, 'allDeals']);
+    // Route::get('/deal/{id}', [HomeController::class, 'getDeal']);
 });
 
+Route::get('/active-stats', [HomeController::class, 'activeStats']);
 Route::get('/deals', [DealController::class, 'index']);
 Route::get('/deals/{id}', [DealController::class, 'show']);
-Route::get('/businesses', [BusinessController::class, 'index']);
-Route::get('/businesses/{id}', [BusinessController::class, 'show']);
-Route::get('/deals/week', [DealController::class, 'dealOfTheWeek']);
+Route::get('/deals-week', [DealController::class, 'dealOfTheWeek']);
+Route::get('/businesses', [FrontendBusinessController::class, 'index']);
+Route::get('/businesses/{id}', [FrontendBusinessController::class, 'show']);
+
+//Check this
 Route::get('/coupons', [CouponController::class, 'index']);
 Route::get('/coupons/{id}', [CouponController::class, 'show']);
-Route::post('/contact-us', [ContactMessageController::class, 'submit']);
+
+Route::post('/contact-message', [ContactMessageController::class, 'store']);
+Route::post('/newsletter-subscribe', [SubscribrNewsLetterController::class, 'subscribe']);
+
+// Route::post('/contact-us', [ContactMessageController::class, 'submit']);
 
 
 Route::get('/me', [HomeController::class, 'GetMyInfo'])->middleware('auth:sanctum');
@@ -99,7 +106,9 @@ Route::prefix('admin')
         Route::get('/dashboard', [AdminDashboardController::class, 'index']);
         Route::apiResource('businesses', BusinessController::class);
         Route::apiResource('music-concerts', MusicConcertController::class);
+
         Route::apiResource('farmer-markets', FarmerMarketController::class);
+
         Route::apiResource('art-fairs', ArtFairController::class);
         Route::apiResource('porchfests', PorchfestController::class);
         Route::apiResource('dinings', DiningController::class);

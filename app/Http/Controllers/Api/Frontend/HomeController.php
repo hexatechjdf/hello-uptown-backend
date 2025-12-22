@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\DealResource;
 use App\Models\Business;
 use App\Models\Deal;
+use App\Models\User;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Helpers\ApiResponse;
@@ -42,36 +43,34 @@ class HomeController extends Controller
     }
 
 
-    public function allDeals(Request $request)
-    {
-        $search = $request->input('search'); // Get search query from request
-        $dealsQuery = Deal::query()->where('status', true);
-        if ($search) {
-            $dealsQuery->where(function ($query) use ($search) {
-                $query->where('title', 'like', "%{$search}%")
-                    ->orWhere('short_description', 'like', "%{$search}%")
-                    ->orWhere('long_description', 'like', "%{$search}%")
-                    ->orWhere('discount', 'like', "%{$search}%")
-                    ->orWhere('original_price', 'like', "%{$search}%")
-                    ->orWhere('terms_conditions', 'like', "%{$search}%");
-            });
-        }
-        $deals = $dealsQuery->orderBy('created_at', 'desc')->get();
+    // public function allDeals(Request $request)
+    // {
+    //     $search = $request->input('search'); // Get search query from request
+    //     $dealsQuery = Deal::query()->where('status', true);
+    //     if ($search) {
+    //         $dealsQuery->where(function ($query) use ($search) {
+    //             $query->where('title', 'like', "%{$search}%")
+    //                 ->orWhere('short_description', 'like', "%{$search}%")
+    //                 ->orWhere('long_description', 'like', "%{$search}%")
+    //                 ->orWhere('discount', 'like', "%{$search}%")
+    //                 ->orWhere('original_price', 'like', "%{$search}%")
+    //                 ->orWhere('terms_conditions', 'like', "%{$search}%");
+    //         });
+    //     }
+    //     $deals = $dealsQuery->orderBy('created_at', 'desc')->get();
 
-        return ApiResponse::collection(DealDealResource::collection($deals), 'All deals fetched successfully');
-    }
+    //     return ApiResponse::collection(DealDealResource::collection($deals), 'All deals fetched successfully');
+    // }
 
-    public function getDeal($id)
-    {
-        $deal = Deal::where('id', $id)->where('status', true)->first();
+    // public function getDeal($id)
+    // {
+    //     $deal = Deal::where('id', $id)->where('status', true)->first();
 
-        if (!$deal) {
-            return ApiResponse::error('Deal not found', 404);
-        }
-
-        // Wrap single deal in a collection for ApiResponse::collection
-        return ApiResponse::collection(DealDealResource::collection(collect([$deal])), 'Deal fetched successfully');
-    }
+    //     if (!$deal) {
+    //         return ApiResponse::error('Deal not found', 404);
+    //     }
+    //     return ApiResponse::collection(DealDealResource::collection(collect([$deal])), 'Deal fetched successfully');
+    // }
     public function featuredBusinesses()
     {
         $businesses = Business::take(5)->get();
@@ -127,4 +126,16 @@ class HomeController extends Controller
         $user  = $request->user();
         return ApiResponse::resource(new UserResource($user),'User Fetched Successfully');
     }
+    public function activeStats()
+    {
+        $activeUsersCount = User::where('status', true)->count();
+        $activeBusinessesCount = Business::where('status', true)->count();
+        $data = [
+            'active_users'     => $activeUsersCount,
+            'active_businesses'=> $activeBusinessesCount,
+        ];
+
+        return ApiResponse::success($data, 'Active users and businesses fetched successfully');
+    }
+
 }

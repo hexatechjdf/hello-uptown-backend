@@ -34,10 +34,12 @@ class RegisterService
 
             // Business Admin → Create Business
             if ($data['role'] === 'business_admin') {
-                $user->business()->create([
+                $business = $user->business()->create([
                     'business_name' => $data['business_name'],
                     'slug' => Str::slug($data['business_name']),
                 ]);
+                $user->business_id = $business->id;
+                $user->Save();
             }
 
             return $user;

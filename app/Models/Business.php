@@ -63,6 +63,10 @@ class Business extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
 
     // Accessors for front-end friendly URLs
     public function getLogoUrlAttribute()

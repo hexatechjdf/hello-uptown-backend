@@ -28,7 +28,8 @@ class DealController extends Controller
     {
         $filters = [
             'search' => $request->input('search'),
-            'category' => $request->input('category'),
+            'category_id' => $request->input('category_id'),
+            'business_id' => $request->input('business_id'),
             'price_min' => $request->input('price_min'),
             'price_max' => $request->input('price_max'),
             'filter' => $request->input('filter'), // mostPopular, newest, expiringSoon
@@ -55,9 +56,13 @@ class DealController extends Controller
     /**
      * Deal detail
      */
-    public function show(Deal $deal)
+    public function show($id)
     {
-        return ApiResponse::resource(new DealResource($deal));
+        $deal = Deal::where('id', $id)->where('status', true)->first();
+        if (!$deal) {
+            return ApiResponse::error('Deal not found', 404);
+        }
+        return ApiResponse::collection(DealResource::collection(collect([$deal])), 'Deal fetched successfully');
     }
     public function dealOfTheWeek()
     {

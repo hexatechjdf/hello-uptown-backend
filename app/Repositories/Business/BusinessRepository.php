@@ -25,14 +25,13 @@ class BusinessRepository
     public function all($filters = [], $sort = 'created_at', $order = 'desc', $perPage = 10)
     {
         $query = $this->model->query();
-
         if (!empty($filters['search'])) {
             $query->where('business_name', 'like', "%{$filters['search']}%")
                 ->orWhere('tagline', 'like', "%{$filters['search']}%");
         }
 
-        if (!empty($filters['category'])) {
-            $query->where('category', $filters['category']); // assuming category field exists
+        if (!empty($filters['category_id'])) {
+            $query->where('category_id', (int)$filters['category_id']); // assuming category field exists
         }
 
         if (!empty($filters['status'])) {
@@ -42,10 +41,10 @@ class BusinessRepository
         if (!empty($filters['filter'])) {
             switch ($filters['filter']) {
                 case 'featured':
-                    $query->where('featured', true);
+                    // $query->where('featured', true);
                     break;
                 case 'mostPopular':
-                    $query->orderByDesc('rating'); // assuming rating field
+                    // $query->orderByDesc('rating'); // assuming rating field
                     break;
                 case 'newest':
                     $query->orderByDesc('created_at');
@@ -64,7 +63,7 @@ class BusinessRepository
     public function getPopularBusinesses($limit = 5)
     {
         return $this->model->where('status', true)
-            ->orderByDesc('rating')
+            // ->orderByDesc('rating')
             ->take($limit)
             ->get();
     }
@@ -75,7 +74,7 @@ class BusinessRepository
     public function getFeaturedBusinesses($limit = 5)
     {
         return $this->model->where('status', true)
-            ->where('featured', true)
+            // ->where('featured', true)
             ->take($limit)
             ->get();
     }

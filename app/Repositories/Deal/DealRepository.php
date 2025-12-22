@@ -6,15 +6,37 @@ use App\Models\Deal;
 
 class DealRepository
 {
-    public function search(array $filters, int $businessId)
+
+       protected $model;
+
+    public function __construct(Deal $deal)
+    {
+        $this->model = $deal;
+    }
+
+   public function search(array $filters, int $businessId)
     {
         return Deal::where('business_id', $businessId)
             ->when($filters['search'] ?? null, function ($q, $search) {
                 $q->where('title', 'LIKE', "%{$search}%");
             })
-            ->when($filters['featured'] ?? null, fn($q) => $q->where('is_featured', true))
-            ->when($filters['category_id'] ?? null, fn($q, $category) => $q->where('category_id', $category))
-            ->orderBy($filters['sort_by'] ?? 'id', $filters['sort_order'] ?? 'desc')
+            ->when(isset($filters['featured']), function ($q) {
+                $q->where('is_featured', 1);
+            })
+            ->when($filters['category_id'] ?? null, function ($q, $categoryId) {
+                $q->where('category_id', $categoryId);
+            })
+            ->when(isset($filters['status']), function ($q) use ($filters) {
+                $q->where('status', $filters['status']);
+            })
+            ->when($filters['sort_by'] ?? null, function ($q) use ($filters) {
+                match ($filters['sort_by']) {
+                    'created_date' => $q->orderBy('created_at', 'desc'),
+                    'discount'     => $q->orderBy('discount', 'desc'),
+                    'expiry'       => $q->orderBy('valid_until', 'asc'),
+                    default        => $q->latest(),
+                };
+            }, fn ($q) => $q->latest())
             ->paginate($filters['per_page'] ?? 10);
     }
 
@@ -42,8 +64,8 @@ class DealRepository
                 ->orWhere('short_description', 'like', "%{$filters['search']}%");
         }
 
-        if (!empty($filters['category'])) {
-            $query->where('category', $filters['category']);
+        if (!empty($filters['category_id'])) {
+            $query->where('category_id', $filters['category_id']);
         }
 
         if (!empty($filters['price_min'])) {
@@ -57,7 +79,7 @@ class DealRepository
         if (!empty($filters['filter'])) {
             switch ($filters['filter']) {
                 case 'mostPopular':
-                    $query->orderByDesc('sold_count'); // assuming sold_count field exists
+                    // $query->orderByDesc('sold_count'); // assuming sold_count field exists
                     break;
                 case 'newest':
                     $query->orderByDesc('created_at');
@@ -79,7 +101,7 @@ class DealRepository
     public function getPopularDeals($limit = 5)
     {
         return $this->model->where('status', true)
-            ->orderByDesc('sold_count') // or 'views_count' if sold not present
+            // ->orderByDesc('sold_count') // or 'views_count' if sold not present
             ->take($limit)
             ->get();
     }
@@ -99,7 +121,7 @@ class DealRepository
     {
         // Assuming we have a boolean 'deal_of_week' column
         return $this->model->where('status', true)
-            ->where('deal_of_week', true)
+            // ->where('deal_of_week', true)
             ->first();
     }
 
@@ -110,7 +132,7 @@ class DealRepository
     {
         return $this->model->where('status', true)
             ->where('id', '<>', $excludeId)
-            ->orderByDesc('sold_count') // or 'rating' if available
+            // ->orderByDesc('sold_count') // or 'rating' if available
             ->take($limit)
             ->get();
     }

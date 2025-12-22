@@ -19,13 +19,15 @@ class CouponController extends Controller
 
     public function index()
     {
-        $businessId = auth()->user()->business->id;
-        $search = request('search');
-
-        $coupons = $this->service->list($businessId, $search);
-
-        return CouponResource::collection($coupons)
-            ->additional(['message' => 'Coupons fetched successfully']);
+        $businessId  = auth()->user()->business->id;
+        $filters = [
+            'search'      => request('search'),
+            'category_id' => request('category_id'),
+            'status'      => request('status'),   // 1 or 0
+            'sort_by'     => request('sort_by'),  // latest, oldest, title_asc, title_desc
+        ];
+        $coupons = $this->service->list($businessId, $filters);
+        return CouponResource::collection($coupons)->additional(['message' => 'Coupons fetched successfully']);
     }
 
     public function store(StoreCouponRequest $request)

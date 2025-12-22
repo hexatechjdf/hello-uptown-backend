@@ -26,7 +26,6 @@ class FarmerMarketController extends Controller
     public function store(StoreFarmerMarketRequest $request)
     {
         $market = app(FarmerMarketService::class)->store($request->validated());
-
         return ApiResponse::resource(
             new FarmerMarketResource($market),
             'Farmer market created'

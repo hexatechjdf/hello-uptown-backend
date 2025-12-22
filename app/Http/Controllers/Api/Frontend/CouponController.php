@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Services\Coupon\CouponService;
 use App\Helpers\ApiResponse;
 use App\Models\Coupon;
-use App\Repositories\CouponRepository;
+use App\Repositories\Coupon\CouponRepository;
 use App\Resources\Coupon\CouponResource;
 
 class CouponController extends Controller
@@ -55,11 +55,12 @@ class CouponController extends Controller
         ], 'Coupons retrieved successfully');
     }
 
-    /**
-     * Show coupon details
-     */
-    public function show(Coupon $coupon)
+    public function show($id)
     {
-        return ApiResponse::resource(new CouponResource($coupon));
+        $Coupon = Coupon::where('id', $id)->where('is_active', true)->first();
+        if (!$Coupon) {
+            return ApiResponse::error('Coupon not found', 404);
+        }
+        return ApiResponse::collection(CouponResource::collection(collect([$Coupon])), 'Coupon fetched successfully');
     }
 }

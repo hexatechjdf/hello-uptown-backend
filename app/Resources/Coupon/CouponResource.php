@@ -23,7 +23,7 @@ class CouponResource extends JsonResource
             'minimum_spend'         => $this->minimum_spend,
             'terms_conditions'      => $this->terms_conditions,
             'is_active'             => $this->is_active == 1,
-            'created_at'            => $this->created_at->toDateTimeString(),
+            'created_at'            => $this->created_at,
         ];
     }
 }

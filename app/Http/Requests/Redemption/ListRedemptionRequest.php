@@ -14,21 +14,21 @@ class ListRedemptionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'search'       => 'nullable|string|max:100',
-            'status'       => 'nullable|in:redeemed,pending,failed',
-            'coupon_id'    => 'nullable|integer|exists:coupons,id',
-            'sort_by'      => 'nullable|in:id,redeemed_at,discount_amount',
-            'sort_order'   => 'nullable|in:asc,desc',
-            'per_page'     => 'nullable|integer|min:1|max:100',
+            'search'     => 'nullable|string|max:100',
+            'status'     => 'nullable|string',
+            // 'coupon_id'  => 'nullable|integer',
+            'sort'       => 'nullable|in:newest,oldest',
+            'time'       => 'nullable|in:all,today,this_week,this_month',
+            'per_page'   => 'nullable|integer|min:1|max:100',
         ];
     }
 
-        protected function failedValidation(Validator $validator)
-{
-    throw new HttpResponseException(response()->json([
-        'status' => false,
-        'message' => 'Validation error',
-        'errors' => $validator->errors()
-    ], 422));
-}
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->json([
+            'status'  => false,
+            'message' => 'Validation error',
+            'errors'  => $validator->errors()
+        ], 422));
+    }
 }
