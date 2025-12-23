@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\HealthWellnessRequest;
-use App\Http\Resources\HealthWellnessResource;
+use App\Http\Requests\Admin\HealthWellness\HealthWellnessRequest;
+use App\Resources\Admin\HealthWellness\HealthWellnessResource;
 use App\Services\Admin\HealthWellness\HealthWellnessService;
 use App\Models\HealthWellness;
 use App\Helpers\ApiResponse;
@@ -21,7 +21,7 @@ class HealthWellnessController extends Controller
 
     public function index(Request $request)
     {
-        $items = $this->service->repo->all(
+        $items = $this->service->all(
             $request->only(['search','status']),
             $request->get('sort','date'),
             $request->get('order','desc'),
@@ -39,21 +39,21 @@ class HealthWellnessController extends Controller
 
     public function show($id)
     {
-        $item = $this->service->repo->find($id);
+        $item = $this->service->find($id);
         return ApiResponse::resource(new HealthWellnessResource($item));
     }
 
     public function update(HealthWellnessRequest $request, $id)
     {
-        $item = $this->service->repo->find($id);
+        $item = $this->service->find($id);
         $item = $this->service->update($item, $request->all());
         return ApiResponse::resource(new HealthWellnessResource($item), 'Health & Wellness updated successfully');
     }
 
     public function destroy($id)
     {
-        $item = $this->service->repo->find($id);
-        $this->service->repo->delete($item);
+        $item = $this->service->find($id);
+        $this->service->delete($item);
         return ApiResponse::success(null, 'Health & Wellness deleted successfully');
     }
 }

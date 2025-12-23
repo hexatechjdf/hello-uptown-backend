@@ -23,6 +23,7 @@ use App\Http\Controllers\Api\Deal\DealController as ApiDealController;
 use App\Http\Controllers\Api\Frontend\DealController;
 use App\Http\Controllers\Api\Frontend\CouponController;
 use App\Http\Controllers\Api\Frontend\ContactMessageController;
+use App\Http\Controllers\Api\Frontend\AllPages\AllPagesController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\Frontend\HomeController;
 use App\Http\Controllers\Api\Frontend\SubscribrNewsLetterController;
@@ -57,6 +58,16 @@ Route::get('/deals-week', [DealController::class, 'dealOfTheWeek']);
 Route::get('/businesses', [FrontendBusinessController::class, 'index']);
 Route::get('/businesses/{id}', [FrontendBusinessController::class, 'show']);
 
+Route::get('music-concerts', [AllPagesController::class, 'musicConcerts']);
+Route::get('farmer-markets', [AllPagesController::class, 'farmerMarkets']);
+Route::get('art-fairs', [AllPagesController::class, 'artFairs']);
+Route::get('porchfests', [AllPagesController::class, 'porchfests']);
+Route::get('dinings', [AllPagesController::class, 'dinings']);
+Route::get('nightlifes', [AllPagesController::class, 'nightlifes']);
+Route::get('health-wellness', [AllPagesController::class, 'healthWellness']);
+Route::get('happy-hours', [AllPagesController::class, 'happyHours']);
+Route::get('news', [AllPagesController::class, 'news']);
+
 //Check this
 Route::get('/coupons', [CouponController::class, 'index']);
 Route::get('/coupons/{id}', [CouponController::class, 'show']);
@@ -86,9 +97,12 @@ Route::middleware(['auth:sanctum', 'role:business_admin'])->group(function () {
         Route::get('/profile', [BusinessController::class, 'getProfile']);
         Route::put('/profile/{business}', [BusinessController::class, 'update']);
         Route::apiResource('deals', ApiDealController::class);
+        Route::get('/deal-stats', [ApiDealController::class, 'dealStats']);
         Route::apiResource('coupons', ApiCouponController::class);
+        Route::get('/coupon-stats', [ApiCouponController::class, 'couponStats']);
         Route::apiResource('categories', CategoryController::class);
         Route::get('/redemptions', [RedemptionController::class, 'index']);
+        Route::get('/redemption-stats', [RedemptionController::class, 'RedemptionStats']);
 
         Route::prefix('/dashboard')->group(function () {
             Route::get('/metrics', [DashboardController::class, 'metrics']);
@@ -106,9 +120,7 @@ Route::prefix('admin')
         Route::get('/dashboard', [AdminDashboardController::class, 'index']);
         Route::apiResource('businesses', BusinessController::class);
         Route::apiResource('music-concerts', MusicConcertController::class);
-
         Route::apiResource('farmer-markets', FarmerMarketController::class);
-
         Route::apiResource('art-fairs', ArtFairController::class);
         Route::apiResource('porchfests', PorchfestController::class);
         Route::apiResource('dinings', DiningController::class);

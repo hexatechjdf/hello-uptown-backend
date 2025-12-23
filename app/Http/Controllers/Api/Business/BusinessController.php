@@ -48,9 +48,6 @@ class BusinessController extends Controller
 
         $updatedBusiness = $this->service->updateProfile($business, $request->all());
 
-        return ApiResponse::resource(
-            new BusinessResource($updatedBusiness),
-            'Business profile updated successfully'
-        );
+        return ApiResponse::resource(new BusinessResource($updatedBusiness),'Business profile updated successfully');
     }
 }

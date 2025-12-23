@@ -20,14 +20,14 @@ class BusinessService
      */
     public function updateProfile($business, array $data)
     {
-        $files = ['logo', 'cover_image', 'slider_image'];
-        foreach ($files as $fileKey) {
-            if (!empty($data[$fileKey]) && $data[$fileKey] instanceof UploadedFile) {
-                $data[$fileKey] = $data[$fileKey]->store('business', 'public');
-            } else {
-                unset($data[$fileKey]);
-            }
-        }
+        // $files = ['logo', 'cover_image', 'slider_image'];
+        // foreach ($files as $fileKey) {
+        //     if (!empty($data[$fileKey]) && $data[$fileKey] instanceof UploadedFile) {
+        //         $data[$fileKey] = $data[$fileKey]->store('business', 'public');
+        //     } else {
+        //         unset($data[$fileKey]);
+        //     }
+        // }
 
         if (!empty($data['business_name'])) {
             $data['slug'] = Str::slug($data['business_name']);

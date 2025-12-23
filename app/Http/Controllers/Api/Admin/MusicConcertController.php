@@ -37,6 +37,14 @@ class MusicConcertController extends Controller
         );
     }
 
+    public function show(MusicConcert $musicConcert)
+    {
+        return ApiResponse::resource(
+            new MusicConcertResource($musicConcert),
+            'Concert details retrieved'
+        );
+    }
+
     public function store(Request $request, MusicConcertService $service)
     {
         $validator = Validator::make($request->all(), [

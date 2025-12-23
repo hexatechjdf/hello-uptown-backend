@@ -41,6 +41,13 @@ class FarmerMarketController extends Controller
             'Farmer market updated'
         );
     }
+    public function show(FarmerMarket $farmerMarket)
+    {
+        return ApiResponse::resource(
+            new FarmerMarketResource($farmerMarket),
+            'Farmer market details retrieved'
+        );
+    }
 
     public function destroy(FarmerMarket $farmerMarket)
     {

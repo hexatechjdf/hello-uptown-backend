@@ -1,29 +1,28 @@
 <?php
 
-namespace App\Resources\Admin\HappyHour;
+namespace App\Resources\Admin\News;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class HappyHourResource extends JsonResource
+class NewsResource extends JsonResource
 {
     public function toArray($request)
     {
         return [
             'id' => $this->id,
             'heading' => $this->heading,
-            'imageUrl' => $this->imageUrl,
-            'happyHoursDeals' => $this->happy_hours_deals,
-            'actualPrice' => $this->actual_price,
-            'discountedPrice' => $this->discounted_price,
-            'specialOfferText' => $this->special_offer_text,
+            'subheading' => $this->subheading,
+            'description' => $this->description,
+            'imageUrl' => $this->image, // Changed from imageUrl to match request field 'image'
+            'availableAttendees' => $this->available_attendees, // Added from request
             'address' => $this->address,
             'latitude' => $this->latitude,
             'longitude' => $this->longitude,
-            'contactNumber' => $this->contact_number,
+            'website' => $this->website, // Added from request
             'date' => $this->date?->format('Y-m-d'),
             'day' => $this->day,
-            'startTime' => $this->start_time,
-            'endTime' => $this->end_time,
+            'startTime' => $this->start_time, // Formatted to match request format
+            'endTime' => $this->end_time, // Formatted to match request format
             'status' => $this->status,
             'createdAt' => $this->created_at->toDateTimeString(),
             'updatedAt' => $this->updated_at->toDateTimeString(),

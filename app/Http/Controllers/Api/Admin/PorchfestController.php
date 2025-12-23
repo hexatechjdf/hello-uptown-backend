@@ -26,7 +26,13 @@ class PorchfestController extends Controller
             'Porchfest list'
         );
     }
-
+    public function show(Porchfest $porchfest)
+    {
+        return ApiResponse::resource(
+            new PorchfestResource($porchfest),
+            'Porchfest details retrieved'
+        );
+    }
     public function store(PorchfestRequest $request)
     {
         $event = $this->service->store($request->validated());

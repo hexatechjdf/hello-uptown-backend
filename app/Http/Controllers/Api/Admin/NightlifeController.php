@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\NightlifeRequest;
-use App\Http\Resources\NightlifeResource;
+use App\Http\Requests\Admin\NightLife\NightlifeRequest;
+use App\Resources\Admin\NightLife\NightlifeResource;
 use App\Services\Admin\Nightlife\NightlifeService;
 use App\Models\Nightlife;
 use App\Helpers\ApiResponse;
@@ -21,7 +21,7 @@ class NightlifeController extends Controller
 
     public function index(Request $request)
     {
-        $nightlifes = $this->service->repo->all(
+        $nightlifes = $this->service->all(
             $request->only(['search','status']),
             $request->get('sort','date'),
             $request->get('order','desc'),
@@ -39,21 +39,21 @@ class NightlifeController extends Controller
 
     public function show($id)
     {
-        $nightlife = $this->service->repo->find($id);
+        $nightlife = $this->service->find($id);
         return ApiResponse::resource(new NightlifeResource($nightlife));
     }
 
     public function update(NightlifeRequest $request, $id)
     {
-        $nightlife = $this->service->repo->find($id);
+        $nightlife = $this->service->find($id);
         $nightlife = $this->service->update($nightlife, $request->all());
         return ApiResponse::resource(new NightlifeResource($nightlife), 'Nightlife updated successfully');
     }
 
     public function destroy($id)
     {
-        $nightlife = $this->service->repo->find($id);
-        $this->service->repo->delete($nightlife);
+        $nightlife = $this->service->find($id);
+        $this->service->delete($nightlife);
         return ApiResponse::success(null, 'Nightlife deleted successfully');
     }
 }

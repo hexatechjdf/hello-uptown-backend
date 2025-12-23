@@ -29,16 +29,16 @@ class StoreDealRequest extends FormRequest
 
     public function withValidator(Validator $validator)
     {
-        $validator->after(function ($validator) {
+        // $validator->after(function ($validator) {
 
-            if (!$this->filled('image')) {
-                return;
-            }
-            $error = ImageHelper::validateImageDimensions($this->image,5306,3770);
-            if ($error) {
-                $validator->errors()->add('image', $error);
-            }
-        });
+        //     if (!$this->filled('image')) {
+        //         return;
+        //     }
+        //     $error = ImageHelper::validateImageDimensions($this->image,5306,3770);
+        //     if ($error) {
+        //         $validator->errors()->add('image', $error);
+        //     }
+        // });
     }
 
 }

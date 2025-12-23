@@ -49,4 +49,50 @@ class DealController extends Controller
 
         return ApiResponse::success([], 'Deal deleted successfully');
     }
+
+    public function dealStats()
+    {
+        $businessId = auth()->user()->business->id;
+
+        $stats = Deal::where('business_id', $businessId)
+            ->selectRaw('status, COUNT(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status');
+
+        $totalDeals = $stats->sum();
+
+        $response = [
+            'total' => $totalDeals,
+            'stats' => [
+                [
+                    'status' => "all",
+                    'label'  => 'Total',
+                    'count'  => $totalDeals,
+                ],
+                [
+                    'status' => 1,
+                    'label'  => 'Active',
+                    'count'  => $stats[1] ?? 0,
+                ],
+                [
+                    'status' => 2,
+                    'label'  => 'Scheduled',
+                    'count'  => $stats[2] ?? 0,
+                ],
+                [
+                    'status' => 3,
+                    'label'  => 'Expired',
+                    'count'  => $stats[3] ?? 0,
+                ],
+                [
+                    'status' => 4,
+                    'label'  => 'Draft',
+                    'count'  => $stats[4] ?? 0,
+                ],
+            ],
+        ];
+
+        return ApiResponse::success($response, 'Deal statistics fetched successfully');
+    }
+
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Resources\Admin\HappyHour;
+namespace App\Resources\Website\AllPages\HappyHour;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 

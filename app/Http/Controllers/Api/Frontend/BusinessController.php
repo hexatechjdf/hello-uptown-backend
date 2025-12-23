@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Repositories\Business\BusinessRepository;
 use App\Services\Business\BusinessService;
-use App\Resources\Website\BusinessResource;
+use App\Resources\Website\ForOnlyBusinessResource;
 use App\Models\Business;
 use App\Helpers\ApiResponse;
 
@@ -43,9 +43,9 @@ class BusinessController extends Controller
         $featuredBusinesses = $this->repo->getFeaturedBusinesses(5);
 
         return ApiResponse::success([
-            'businesses' => BusinessResource::collection($businesses),
-            'popularBusinesses' => BusinessResource::collection($popularBusinesses),
-            'featuredBusinesses' => BusinessResource::collection($featuredBusinesses),
+            'businesses' => ForOnlyBusinessResource::collection($businesses),
+            'popularBusinesses' => ForOnlyBusinessResource::collection($popularBusinesses),
+            'featuredBusinesses' => ForOnlyBusinessResource::collection($featuredBusinesses),
         ], 'Businesses retrieved successfully');
     }
 
@@ -58,10 +58,10 @@ class BusinessController extends Controller
         if (!$Business) {
             return ApiResponse::error('Business not found', 404);
         }
-        return ApiResponse::collection(BusinessResource::collection(collect([$Business])), 'Business fetched successfully');
+        return ApiResponse::collection(ForOnlyBusinessResource::collection(collect([$Business])), 'Business fetched successfully');
 
 
         $business = $this->repo->find($id);
-        return ApiResponse::resource(new BusinessResource($business));
+        return ApiResponse::resource(new ForOnlyBusinessResource($business));
     }
 }

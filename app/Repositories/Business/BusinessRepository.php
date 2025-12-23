@@ -27,7 +27,7 @@ class BusinessRepository
         $query = $this->model->query();
         if (!empty($filters['search'])) {
             $query->where('business_name', 'like', "%{$filters['search']}%")
-                ->orWhere('tagline', 'like', "%{$filters['search']}%");
+                ->orWhere('short_description', 'like', "%{$filters['search']}%");
         }
 
         if (!empty($filters['category_id'])) {

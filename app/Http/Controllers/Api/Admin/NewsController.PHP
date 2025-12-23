@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\NewsRequest;
-use App\Http\Resources\NewsResource;
+use App\Http\Requests\Admin\News\NewsRequest;
+use App\Resources\Admin\News\NewsResource;
 use App\Services\Admin\News\NewsService;
 use App\Models\News;
 use App\Helpers\ApiResponse;
@@ -21,7 +21,7 @@ class NewsController extends Controller
 
     public function index(Request $request)
     {
-        $items = $this->service->repo->all(
+        $items = $this->service->all(
             $request->only(['search','status']),
             $request->get('sort','date'),
             $request->get('order','desc'),
@@ -39,21 +39,21 @@ class NewsController extends Controller
 
     public function show($id)
     {
-        $item = $this->service->repo->find($id);
+        $item = $this->service->find($id);
         return ApiResponse::resource(new NewsResource($item));
     }
 
     public function update(NewsRequest $request, $id)
     {
-        $item = $this->service->repo->find($id);
+        $item = $this->service->find($id);
         $item = $this->service->update($item, $request->all());
         return ApiResponse::resource(new NewsResource($item), 'News updated successfully');
     }
 
     public function destroy($id)
     {
-        $item = $this->service->repo->find($id);
-        $this->service->repo->delete($item);
+        $item = $this->service->find($id);
+        $this->service->delete($item);
         return ApiResponse::success(null, 'News deleted successfully');
     }
 }

@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\HappyHourRequest;
-use App\Http\Resources\HappyHourResource;
+use App\Http\Requests\Admin\HappyHour\HappyHourRequest;
+use App\Resources\Admin\HappyHour\HappyHourResource;
 use App\Services\Admin\HappyHour\HappyHourService;
 use App\Models\HappyHour;
 use App\Helpers\ApiResponse;
@@ -21,7 +21,7 @@ class HappyHourController extends Controller
 
     public function index(Request $request)
     {
-        $items = $this->service->repo->all(
+        $items = $this->service->all(
             $request->only(['search','status']),
             $request->get('sort','date'),
             $request->get('order','desc'),
@@ -39,21 +39,21 @@ class HappyHourController extends Controller
 
     public function show($id)
     {
-        $item = $this->service->repo->find($id);
+        $item = $this->service->find($id);
         return ApiResponse::resource(new HappyHourResource($item));
     }
 
     public function update(HappyHourRequest $request, $id)
     {
-        $item = $this->service->repo->find($id);
+        $item = $this->service->find($id);
         $item = $this->service->update($item, $request->all());
         return ApiResponse::resource(new HappyHourResource($item), 'Happy Hours updated successfully');
     }
 
     public function destroy($id)
     {
-        $item = $this->service->repo->find($id);
-        $this->service->repo->delete($item);
+        $item = $this->service->find($id);
+        $this->service->delete($item);
         return ApiResponse::success(null, 'Happy Hours deleted successfully');
     }
 }

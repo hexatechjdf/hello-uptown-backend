@@ -1,25 +1,26 @@
 <?php
 
-namespace App\Resources\Admin\HappyHour;
+namespace App\Resources\Website\AllPages\HealthWellness;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class HappyHourResource extends JsonResource
+class HealthWellnessResource extends JsonResource
 {
     public function toArray($request)
     {
         return [
             'id' => $this->id,
             'heading' => $this->heading,
+            'subheading' => $this->subheading,
+            'description' => $this->description,
             'imageUrl' => $this->imageUrl,
-            'happyHoursDeals' => $this->happy_hours_deals,
+            'mainTags' => $this->main_tags,
+            'headerTags' => $this->header_tags,
             'actualPrice' => $this->actual_price,
             'discountedPrice' => $this->discounted_price,
-            'specialOfferText' => $this->special_offer_text,
             'address' => $this->address,
             'latitude' => $this->latitude,
             'longitude' => $this->longitude,
-            'contactNumber' => $this->contact_number,
             'date' => $this->date?->format('Y-m-d'),
             'day' => $this->day,
             'startTime' => $this->start_time,

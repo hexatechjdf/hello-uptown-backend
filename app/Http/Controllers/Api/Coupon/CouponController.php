@@ -61,4 +61,45 @@ class CouponController extends Controller
 
         return ApiResponse::success([], 'Coupon deleted successfully');
     }
+
+    public function couponStats()
+    {
+        $businessId = auth()->user()->business->id;
+
+        $stats = Coupon::where('business_id', $businessId)->selectRaw('is_active, COUNT(*) as total')->groupBy('is_active')->pluck('total', 'is_active');
+
+        $totalCoupons = $stats->sum();
+
+        $response = [
+            'stats' => [
+                [
+                    'status' => "all",
+                    'label'  => 'Total',
+                    'count'  => $totalCoupons,
+                ],
+                [
+                    'status' => 1,
+                    'label'  => 'Active',
+                    'count'  => $stats[1] ?? 0,
+                ],
+                [
+                    'status' => 0,
+                    'label'  => 'Inactive',
+                    'count'  => $stats[0] ?? 0,
+                ],
+                [
+                    'status' => 2,
+                    'label'  => 'Expired',
+                    'count'  => $stats[2] ?? 0,
+                ],
+                [
+                    'status' => 3,
+                    'label'  => 'Draft',
+                    'count'  => $stats[3] ?? 0,
+                ],
+            ],
+        ];
+        return ApiResponse::success($response, 'Coupon statistics fetched successfully');
+    }
+
 }

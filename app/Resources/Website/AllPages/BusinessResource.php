@@ -1,0 +1,45 @@
+<?php
+
+namespace App\Resources\Admin;
+
+use App\Resources\User\UserResource;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class BusinessResource extends JsonResource
+{
+    public function toArray($request)
+    {
+        return [
+            'id'                  => $this->id,
+            'name'                => $this->business_name,
+            'slug'                => $this->slug,
+            'short_description'    => $this->short_description,
+            'long_description'     => $this->long_description,
+            'description'         => $this->description ?? $this->short_description,
+            'category'            => $this->category ?? null,
+            'tags'                => $this->tags ?? [],
+            'logo'                => $this->logo,
+            'cover_image'          => $this->cover_image,
+            'address'             => $this->address,
+            'latitude'            => $this->latitude,
+            'longitude'           => $this->longitude,
+            'redemption_radius'    => $this->redemption_radius ?? null,
+            'phone'               => $this->phone,
+            'email'               => $this->email,
+            'website'             => $this->website,
+            'opening_hours'        => $this->opening_hours,
+            'social_links'         => [
+                'facebook'  => $this->facebook_link,
+                'instagram' => $this->instagram_link,
+                'twitter'   => $this->twitter_link,
+            ],
+            'member_since'         => $this->created_at,
+            'is_active'            => $this->status,
+            'slider_settings' => $this->sliderSettings,
+            'notification_settings' => $this->notificationSettings,
+            'cover_url' => $this->coverUrl,
+            'logo_url' => $this->logoUrl,
+            'user' => new UserResource($this->whenLoaded('user')),
+        ];
+    }
+}
