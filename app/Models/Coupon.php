@@ -11,6 +11,7 @@ class Coupon extends Model
         'title',
         'coupon_code',
         'short_description',
+        'image',
         'long_description',
         'discount_type',
         'discount_value',

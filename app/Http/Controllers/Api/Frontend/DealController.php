@@ -8,6 +8,7 @@ use App\Helpers\ApiResponse;
 use App\Models\Deal;
 use App\Repositories\Deal\DealRepository;
 use App\Resources\Deal\DealResource;
+use App\Resources\Deal\DealOfWeekResource;
 use App\Services\Deal\DealService;
 
 class DealController extends Controller
@@ -72,9 +73,9 @@ class DealController extends Controller
             return ApiResponse::error('No deal of the week found', 404);
         }
         $otherDeals = $this->repo->getOtherGreatDeals($mainDeal->id, 4);
-        return ApiResponse::success([
-            'dealOfTheWeek' => new DealResource($mainDeal),
-            'otherGreatDeals' => DealResource::collection($otherDeals),
-        ], 'Deal of the week retrieved successfully');
+
+        return ApiResponse::success(new DealOfWeekResource($mainDeal), 'Deal of the week retrieved successfully');
+
+        // return ApiResponse::success(['dealOfTheWeek' => new DealOfWeekResource($mainDeal),'otherGreatDeals' => DealOfWeekResource::collection($otherDeals),], 'Deal of the week retrieved successfully');
     }
 }

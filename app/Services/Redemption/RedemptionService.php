@@ -41,6 +41,6 @@ class RedemptionService
         }
         $query->orderBy('redeemed_at',($filters['sort'] ?? 'newest') === 'oldest' ? 'asc' : 'desc');
 
-        return $query->paginate($filters['per_page'] ?? 20);
+        return $query->paginate($filters['per_page'] ?? 10);
     }
 }

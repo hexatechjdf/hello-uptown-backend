@@ -3,6 +3,7 @@
 namespace App\Resources\Website\AllPages\MusicConcert;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Str;
 
 class MusicConcertResource extends JsonResource
 {
@@ -10,18 +11,19 @@ class MusicConcertResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'mainHeading' => $this->main_heading,
-            'subHeading' => $this->sub_heading,
+            'slug' => Str::slug($this->main_heading),
+            'title' => $this->main_heading,
+            'venue' => $this->address,
             'description' => $this->event_description,
-            'imageUrl' => $this->image ?? null,
-            'availableAttendees' => $this->available_attendees,
-            'address' => $this->address,
-            'latitude' => $this->latitude,
-            'longitude' => $this->longitude,
-            'website' => $this->website,
-            'status' => $this->status,
-            'eventDate' => $this->event_date,
-            'createdAt' => $this->created_at,
+            'image' => $this->image ?? null,
+            'location' => $this->address,
+            'time' => $this->event_date,
+            'attendance' => $this->available_attendees,
+            'price' => null,// no db field
+            'category' => "Music Concert",
+            'websiteUrl' => $this->website,
+            'directionsUrl' => $this->address,
+            'ticketUrl' => null,
         ];
     }
 }

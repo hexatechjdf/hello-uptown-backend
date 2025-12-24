@@ -8,7 +8,7 @@ class CouponService
 {
   public function list($businessId, array $filters = [])
     {
-        return Coupon::where('business_id', $businessId)
+        return Coupon::where('business_id', $businessId)->with('business')
             ->withCount('redemptions')
             ->when($filters['search'] ?? null, function ($q, $search) {
                 $q->where(function ($query) use ($search) {

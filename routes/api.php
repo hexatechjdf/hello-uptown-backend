@@ -59,11 +59,11 @@ Route::get('/businesses', [FrontendBusinessController::class, 'index']);
 Route::get('/businesses/{id}', [FrontendBusinessController::class, 'show']);
 
 Route::get('music-concerts', [AllPagesController::class, 'musicConcerts']);
-Route::get('farmer-markets', [AllPagesController::class, 'farmerMarkets']);
-Route::get('art-fairs', [AllPagesController::class, 'artFairs']);
-Route::get('porchfests', [AllPagesController::class, 'porchfests']);
-Route::get('dinings', [AllPagesController::class, 'dinings']);
-Route::get('nightlifes', [AllPagesController::class, 'nightlifes']);
+Route::get('farmer-markets', [AllPagesController::class, 'farmerMarkets']); // Done
+Route::get('art-fairs', [AllPagesController::class, 'artFairs']); // Done
+Route::get('porchfests', [AllPagesController::class, 'porchfests']); // Done
+Route::get('dinings', [AllPagesController::class, 'dinings']); // Done
+Route::get('nightlifes', [AllPagesController::class, 'nightlifes']); // Done
 Route::get('health-wellness', [AllPagesController::class, 'healthWellness']);
 Route::get('happy-hours', [AllPagesController::class, 'happyHours']);
 Route::get('news', [AllPagesController::class, 'news']);
@@ -95,6 +95,9 @@ Route::middleware(['auth:sanctum', 'role:business_admin'])->group(function () {
     Route::prefix('business')->group(function () {
 
         Route::get('/profile', [BusinessController::class, 'getProfile']);
+        Route::post('/user-update', [BusinessController::class, 'userUpdate']);
+        Route::post('/user-notifications', [BusinessController::class, 'userNotification']);
+        Route::post('/password-update', [BusinessController::class, 'passwordUpdate']);
         Route::put('/profile/{business}', [BusinessController::class, 'update']);
         Route::apiResource('deals', ApiDealController::class);
         Route::get('/deal-stats', [ApiDealController::class, 'dealStats']);

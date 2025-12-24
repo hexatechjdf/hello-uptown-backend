@@ -12,6 +12,8 @@ class CouponResource extends JsonResource
             'id'                    => $this->id,
             'title'                 => $this->title,
             'coupon_code'           => $this->coupon_code,
+            'businessLogo'          => $this->business?->logo ?? null,
+            'image'                 => $this->image ?? null,
             'short_description'     => $this->short_description,
             'long_description'      => $this->long_description,
             'discount_type'         => $this->discount_type,

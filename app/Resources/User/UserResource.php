@@ -16,10 +16,11 @@ class UserResource extends JsonResource
             'lastName'   => $this->last_name,
             'email'      => $this->email,
             'phone'      => $this->phone,
+            'notifications'  => $this->notifications == 1,
             'role'       => $this->roles->pluck('name')->first(),
-            'avatar'     => $this->avatar ?? null,
+            'avatar'     => $this->profile ?? null,
             'createdAt'  => $this->created_at,
-            'businessId' => ($this->relationLoaded('business') && $this->business ? $this->business->id : null),
+            'businessId' =>  $this->business_id ?? ($this->relationLoaded('business') && $this->business ? $this->business->id : null),
             'business'    => $this->whenLoaded('business', fn() => new BusinessResource($this->business)),
 
         ];

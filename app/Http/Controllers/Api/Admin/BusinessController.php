@@ -8,7 +8,8 @@ use App\Resources\Admin\BusinessResource;
 use App\Helpers\ApiResponse;
 use App\Models\Business;
 use Illuminate\Http\Request;
-
+use App\Resources\User\UserResource;
+use Illuminate\Support\Facades\Hash;
 class BusinessController extends Controller
 {
     public function __construct(
@@ -177,4 +178,78 @@ class BusinessController extends Controller
 
         return ApiResponse::success(null, 'Business deleted successfully');
     }
+
+    public function userUpdate(Request $request)
+    {
+        $user = $request->user();
+
+        $validated = $request->validate([
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
+            'profile' => ['nullable', 'string', 'max:500'],
+            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+        ]);
+        $user->first_name = $validated['first_name'];
+        $user->last_name = $validated['last_name'];
+        $user->email = $validated['email'];
+        $user->profile = $validated['profile'] ?? $user->profile;
+        $user->name = $validated['first_name'] . " " . $validated['last_name'];
+
+        if ($request->filled('password')) {
+            $user->password = Hash::make($validated['password']);
+        }
+
+        $user->save();
+
+        return ApiResponse::resource(new UserResource($user), 'User updated successfully');
+    }
+
+    public function userNotification(Request $request)
+    {
+        $user = $request->user();
+        $validated = $request->validate([
+            'notifications' => ['required', 'string', 'max:255']
+        ]);
+        $user->notifications = $validated['notifications'];
+        $user->save();
+        return ApiResponse::resource(new UserResource($user), 'User Notification status updated successfully');
+    }
+
+    public function passwordUpdate(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|min:12|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/',
+                'confirm_new_password' => 'required|same:new_password'
+            ],
+            [
+                'new_password.regex' => 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.',
+                'new_password.min' => 'Password must be at least 12 characters long.',
+                'confirm_new_password.same' => 'New password and confirmation password do not match.'
+            ]);
+
+            $user = $request->user();
+            if (!Hash::check($request->current_password, $user->password)) {
+                return response()->json([
+                    'message' => 'Current password is incorrect.',
+                    'errors' => [
+                        'current_password' => ['Current password is incorrect.']
+                    ]
+                ], 422);
+            }
+            if (Hash::check($request->new_password, $user->password)) {
+                return response()->json([
+                    'message' => 'New password must be different from current password.',
+                    'errors' => [
+                        'new_password' => ['New password must be different from current password.']
+                    ]
+                ], 422);
+            }
+            $user->password = $request->new_password;
+            $user->save();
+
+            return ApiResponse::resource(new UserResource($user), 'Password updated successfully');
+        }
+
 }

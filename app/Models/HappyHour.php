@@ -33,8 +33,4 @@ class HappyHour extends Model
         'date' => 'date',
     ];
 
-    public function getImageUrlAttribute()
-    {
-        return $this->image ? asset('storage/' . $this->image) : null;
-    }
 }

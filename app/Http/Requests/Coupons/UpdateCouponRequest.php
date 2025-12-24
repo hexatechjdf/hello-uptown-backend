@@ -18,7 +18,7 @@ class UpdateCouponRequest extends FormRequest
             'title' => 'sometimes|string|max:255',
 
             'coupon_code' => 'sometimes|string|max:50|unique:coupons,coupon_code,' . $this->coupon->id,
-
+            'image'             => 'nullable|url',
             'short_description' => 'nullable|string|max:255',
             'long_description' => 'nullable|string',
 

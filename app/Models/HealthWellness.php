@@ -34,9 +34,4 @@ class HealthWellness extends Model
         'longitude' => 'decimal:7',
         'date' => 'date',
     ];
-
-    public function getImageUrlAttribute()
-    {
-        return $this->image ? asset('storage/' . $this->image) : null;
-    }
 }

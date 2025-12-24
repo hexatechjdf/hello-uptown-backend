@@ -20,7 +20,7 @@ class StoreCouponRequest extends FormRequest
 
             'short_description' => 'nullable|string|max:255',
             'long_description' => 'nullable|string',
-
+            'image'             => 'nullable|url',
             'discount_type' => 'required|in:fixed,percentage',
             'discount_value' => 'required|numeric|min:0',
 
