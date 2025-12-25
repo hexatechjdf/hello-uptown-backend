@@ -38,19 +38,19 @@ class DealController extends Controller
 
         $sort = 'created_at';
         $order = 'desc';
-        $perPage = $request->input('perPage', 10);
+        $perPage = 0;// $request->input('perPage', 0);
 
         $deals = $this->repo->all($filters, $sort, $order, $perPage);
-
         // Additional 2 card info
-        $popularDeals = $this->repo->getPopularDeals(5);
-        $expiringSoonDeals = $this->repo->getExpiringSoonDeals(5);
+        $popularDeals = $this->repo->getPopularDeals(5)->count();
+        $expiringSoonDeals = $this->repo->getExpiringSoonDeals(5)->count();
+        $getNewestDeals = $this->repo->getNewestDeals(5)->count();
 
         return ApiResponse::success([
             'deals' => DealResource::collection($deals),
-            'popularDeals' => 2,
-            'expiringSoonDeals' => 2,
-            'newDeals'  => 2,
+            'popularDeals' => $popularDeals,
+            'expiringSoonDeals' => $expiringSoonDeals,
+            'newDeals'  => $getNewestDeals,
         ], 'Deals retrieved successfully');
     }
 

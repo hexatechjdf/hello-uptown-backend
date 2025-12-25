@@ -14,7 +14,7 @@ class DashboardController extends Controller
     {
         $this->service = $service;
     }
-D:\laragon\www\HTS-Projects\hello-uptown-backend\app\Http\Controllers\Api\Frontend\AllPages
+    
     public function index()
     {
         $data = $this->service->stats();

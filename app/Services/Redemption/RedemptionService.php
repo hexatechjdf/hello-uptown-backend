@@ -7,9 +7,9 @@ use Carbon\Carbon;
 
 class RedemptionService
 {
-    public function list(array $filters)
+    public function list(array $filters, $businessId)
     {
-        $query = Redemption::with([
+        $query = Redemption::where('business_id', $businessId)->with([
             'coupon:id,title,coupon_code',
             'user:id,first_name,last_name,email'
         ]);

@@ -17,7 +17,7 @@ class DealController extends Controller
 
     public function index(Request $request)
     {
-        $businessId = auth()->user()->business->id;
+        $businessId = (int)request()->query('business_id') ?? auth()->user()->business->id;
 
         $deals = $this->service->list($request->all(), $businessId);
 
@@ -26,7 +26,8 @@ class DealController extends Controller
 
     public function store(StoreDealRequest $request)
     {
-        $deal = $this->service->create($request->validated(), auth()->user()->business->id);
+        $businessId = (int)request()->query('business_id') ?? auth()->user()->business->id;
+        $deal = $this->service->create($request->validated(), $businessId);
 
         return ApiResponse::resource(new DealResource($deal), 'Deal created successfully');
     }
@@ -52,7 +53,7 @@ class DealController extends Controller
 
     public function dealStats()
     {
-        $businessId = auth()->user()->business->id;
+        $businessId = (int)request()->query('business_id') ?? auth()->user()->business->id;
 
         $stats = Deal::where('business_id', $businessId)
             ->selectRaw('status, COUNT(*) as total')

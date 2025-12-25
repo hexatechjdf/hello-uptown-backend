@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Scopes\BusinessScope;
 
 class Deal extends Model
 {
@@ -24,7 +25,10 @@ class Deal extends Model
         'is_featured',
         'status',
     ];
-
+    protected static function booted()
+    {
+        static::addGlobalScope(new BusinessScope);
+    }
     public function business()
     {
         return $this->belongsTo(Business::class);

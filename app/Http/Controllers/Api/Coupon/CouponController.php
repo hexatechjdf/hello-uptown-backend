@@ -19,7 +19,7 @@ class CouponController extends Controller
 
     public function index()
     {
-        $businessId  = auth()->user()->business->id;
+       $businessId = (int)request()->query('business_id') ?? auth()->user()->business->id;
         $filters = [
             'search'      => request('search'),
             'category_id' => request('category_id'),
@@ -32,7 +32,7 @@ class CouponController extends Controller
 
     public function store(StoreCouponRequest $request)
     {
-        $businessId = auth()->user()->business->id;
+        $businessId = (int)request()->query('business_id') ?? auth()->user()->business->id;
 
         $coupon = $this->service->create($businessId, $request->validated());
 
@@ -64,7 +64,7 @@ class CouponController extends Controller
 
     public function couponStats()
     {
-        $businessId = auth()->user()->business->id;
+        $businessId = (int)request()->query('business_id') ?? auth()->user()->business->id;
 
         $stats = Coupon::where('business_id', $businessId)->selectRaw('is_active, COUNT(*) as total')->groupBy('is_active')->pluck('total', 'is_active');
 

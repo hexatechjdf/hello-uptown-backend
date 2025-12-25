@@ -55,13 +55,15 @@ class DealRepository
     {
         return $deal->delete();
     }
-    public function all($filters = [], $sort = 'created_at', $order = 'desc', $perPage = 10)
+       public function all($filters = [], $sort = 'created_at', $order = 'desc', $perPage = 10)
     {
         $query = $this->model->query()->where('status', true);
 
         if (!empty($filters['search'])) {
-            $query->where('title', 'like', "%{$filters['search']}%")
+            $query->where(function ($q) use ($filters) {
+                $q->where('title', 'like', "%{$filters['search']}%")
                 ->orWhere('short_description', 'like', "%{$filters['search']}%");
+            });
         }
 
         if (!empty($filters['category_id'])) {
@@ -79,17 +81,37 @@ class DealRepository
         if (!empty($filters['filter'])) {
             switch ($filters['filter']) {
                 case 'mostPopular':
-                    // $query->orderByDesc('sold_count'); // assuming sold_count field exists
+                    // Same logic as getPopularDeals()
+                    // Uncomment when column exists
+                    // $query->orderByDesc('sold_count');
                     break;
                 case 'newest':
-                    $query->orderByDesc('created_at');
+                    // Same logic as getNewestDeals()
+                       $query->whereBetween('created_at', [
+                    now()->subWeek(),
+                    now()
+                ])
+                ->orderBy('created_at', 'desc');
                     break;
-                case 'expiringSoon':
-                    $query->orderBy('valid_until', 'asc');
+
+                    case 'isExpiringSoon':
+                        $query->whereNotNull('valid_until')
+                            ->whereBetween('valid_until', [
+                                now(),
+                                now()->addWeek()
+                            ])
+                            ->orderBy('valid_until', 'asc');
+                        break;
+                default:
+                    $query->orderBy($sort, $order);
                     break;
             }
         } else {
             $query->orderBy($sort, $order);
+        }
+        // Return all or paginated
+        if ((int) $perPage === 0) {
+            return $query->get();
         }
 
         return $query->paginate($perPage);
@@ -102,21 +124,40 @@ class DealRepository
     {
         return $this->model->where('status', true)
             // ->orderByDesc('sold_count') // or 'views_count' if sold not present
-            ->take($limit)
+            // ->take($limit)
+            ->get();
+    }
+
+    public function getNewestDeals($limit = 5)
+    {
+        return $this->model
+            ->where('status', true)
+            ->whereBetween('created_at', [
+                now()->subWeek(),
+                now()
+            ])
+            ->orderBy('created_at', 'desc')
+            // ->take($limit)
             ->get();
     }
 
     /**
      * Get expiring soon deals
      */
-    public function getExpiringSoonDeals($limit = 5)
-    {
-        return $this->model->where('status', true)
-            ->whereNotNull('valid_until')
-            ->orderBy('valid_until', 'asc')
-            ->take($limit)
-            ->get();
-    }
+        public function getExpiringSoonDeals($limit = 5)
+        {
+            return $this->model
+                ->where('status', true)
+                ->whereNotNull('valid_until')
+                ->whereBetween('valid_until', [
+                    now(),
+                    now()->addWeek()
+                ])
+                ->orderBy('valid_until', 'asc')
+                // ->take($limit)
+                ->get();
+        }
+
     public function getDealOfTheWeek()
     {
         // Assuming we have a boolean 'deal_of_week' column

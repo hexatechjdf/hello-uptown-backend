@@ -89,6 +89,16 @@ Route::prefix('auth')->group(function () {
 
 });
 
+Route::middleware(['auth:sanctum', 'check_business_id:business_admin,superadmin' ])->group(function () {
+ Route::prefix('business')->group(function () {
+        Route::apiResource('deals', ApiDealController::class);
+        Route::get('/deal-stats', [ApiDealController::class, 'dealStats']);
+        Route::apiResource('coupons', ApiCouponController::class);
+        Route::get('/coupon-stats', [ApiCouponController::class, 'couponStats']);
+        Route::get('/redemptions', [RedemptionController::class, 'index']);
+        Route::get('/redemption-stats', [RedemptionController::class, 'RedemptionStats']);
+    });
+});
 
 
 Route::middleware(['auth:sanctum', 'role:business_admin'])->group(function () {
@@ -99,13 +109,13 @@ Route::middleware(['auth:sanctum', 'role:business_admin'])->group(function () {
         Route::post('/user-notifications', [BusinessController::class, 'userNotification']);
         Route::post('/password-update', [BusinessController::class, 'passwordUpdate']);
         Route::put('/profile/{business}', [BusinessController::class, 'update']);
-        Route::apiResource('deals', ApiDealController::class);
-        Route::get('/deal-stats', [ApiDealController::class, 'dealStats']);
-        Route::apiResource('coupons', ApiCouponController::class);
-        Route::get('/coupon-stats', [ApiCouponController::class, 'couponStats']);
+        // Route::apiResource('deals', ApiDealController::class);
+        // Route::get('/deal-stats', [ApiDealController::class, 'dealStats']);
+        // Route::apiResource('coupons', ApiCouponController::class);
+        // Route::get('/coupon-stats', [ApiCouponController::class, 'couponStats']);
         Route::apiResource('categories', CategoryController::class);
-        Route::get('/redemptions', [RedemptionController::class, 'index']);
-        Route::get('/redemption-stats', [RedemptionController::class, 'RedemptionStats']);
+        // Route::get('/redemptions', [RedemptionController::class, 'index']);
+        // Route::get('/redemption-stats', [RedemptionController::class, 'RedemptionStats']);
 
         Route::prefix('/dashboard')->group(function () {
             Route::get('/metrics', [DashboardController::class, 'metrics']);

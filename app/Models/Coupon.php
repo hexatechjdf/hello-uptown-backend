@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Scopes\BusinessScope;
 
 class Coupon extends Model
 {
@@ -29,6 +30,10 @@ class Coupon extends Model
         'valid_until' => 'date',
         'is_active' => 'boolean',
     ];
+    protected static function booted()
+    {
+        static::addGlobalScope(new BusinessScope);
+    }
 
     public function business()
     {
