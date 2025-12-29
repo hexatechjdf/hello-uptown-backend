@@ -24,6 +24,7 @@ class DealResource extends JsonResource
             'valid_until'       => $this->valid_until,
             'terms_conditions'  => $this->terms_conditions,
             'status'            => $this->status == 1,
+            'included'          => $this->included ?? null,
             'created_at'        => $this->created_at,
         ];
     }

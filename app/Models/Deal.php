@@ -24,6 +24,7 @@ class Deal extends Model
         'terms_conditions',
         'is_featured',
         'status',
+        'included',
     ];
     protected static function booted()
     {
@@ -38,4 +39,5 @@ class Deal extends Model
     {
         return $this->belongsTo(Category::class);
     }
+    protected $casts = ['included' => 'array',];
 }

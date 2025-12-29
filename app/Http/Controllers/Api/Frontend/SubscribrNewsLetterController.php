@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Api\Frontend;
 
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\UnsubscribeNewsletterRequest;
 use App\Http\Requests\Website\SubscribeNewsletter\SubscribeNewsletterRequest;
+use App\Http\Requests\Website\SubscribeNewsletter\UnsubscribeNewsletterRequest;
 use App\Models\NewsletterSubscription;
 use App\Resources\Website\NewsletterSubscriptionResource;
 use App\Services\Website\NewsletterSubscriptionService;
@@ -37,16 +37,37 @@ class SubscribrNewsLetterController extends Controller
     }
 
 
-    public function unsubscribe(UnsubscribeNewsletterRequest $request)
+    public function unsubscribe($email)
     {
-        $unsubscribed = $this->service->unsubscribe($request->email);
-
+        if (!$email) {
+            return view('unsubscribe.result', [
+                'status' => 'error',
+                'message' => 'Unable to unsubscribe. Email not found.'
+            ]);
+        }
+        $unsubscribed = $this->service->unsubscribe($email);
         if ($unsubscribed) {
-            return ApiResponse::success([], 'You have been unsubscribed from our newsletter.');
+            return view('unsubscribe.result', ['status' => 'success', 'message' => 'You have been successfully unsubscribed from our newsletter.']);
         }
 
-        return ApiResponse::error('Unable to unsubscribe. Subscription not found or already unsubscribed.', 404);
+        return view('unsubscribe.result', ['status' => 'error','message' => 'Subscription not found or already unsubscribed.']);
+
     }
+
+
+    // public function unsubscribe($email)
+    // {
+    //     if(!$email){
+    //         return ApiResponse::error('Unable to unsubscribe. Email is not found', 404);
+    //     }
+    //     $unsubscribed = $this->service->unsubscribe($email);
+
+    //     if ($unsubscribed) {
+    //         return ApiResponse::success([], 'You have been unsubscribed from our newsletter.');
+    //     }
+
+    //     return ApiResponse::error('Unable to unsubscribe. Subscription not found or already unsubscribed.', 404);
+    // }
 
     public function show(NewsletterSubscription $newsletterSubscription)
     {

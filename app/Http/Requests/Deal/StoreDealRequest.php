@@ -24,6 +24,9 @@ class StoreDealRequest extends FormRequest
             'terms_conditions'  => 'nullable|string',
             'is_featured'       => 'boolean',
             'status'            => 'boolean',
+            'included'          => 'nullable|array',
+            'included.*'        => 'string|max:255',
+
         ];
     }
 

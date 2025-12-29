@@ -74,6 +74,7 @@ Route::get('/coupons/{id}', [CouponController::class, 'show']);
 
 Route::post('/contact-message', [ContactMessageController::class, 'store']);
 Route::post('/newsletter-subscribe', [SubscribrNewsLetterController::class, 'subscribe']);
+Route::get('/unsubscribe/{email}', [SubscribrNewsLetterController::class, 'unsubscribe'])->name('unsubscribe');
 
 // Route::post('/contact-us', [ContactMessageController::class, 'submit']);
 
