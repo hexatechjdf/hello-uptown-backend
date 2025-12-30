@@ -15,6 +15,8 @@ use App\Http\Controllers\Api\Admin\HealthWellnessController;
 use App\Http\Controllers\Api\Admin\MusicConcertController;
 use App\Http\Controllers\Api\Admin\NewsController;
 use App\Http\Controllers\Api\Admin\NightlifeController;
+use App\Http\Controllers\Api\Admin\AdvertisementController;
+use App\Http\Controllers\Api\Admin\SettingController;
 use App\Http\Controllers\Api\Admin\PorchfestController;
 use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\Category\CategoryController;
@@ -67,6 +69,7 @@ Route::get('nightlifes', [AllPagesController::class, 'nightlifes']); // Done
 Route::get('health-wellness', [AllPagesController::class, 'healthWellness']);
 Route::get('happy-hours', [AllPagesController::class, 'happyHours']);
 Route::get('news', [AllPagesController::class, 'news']);
+Route::get('advertisements', [AllPagesController::class, 'advertisements']);
 
 //Check this
 Route::get('/coupons', [CouponController::class, 'index']);
@@ -142,4 +145,8 @@ Route::prefix('admin')
         Route::apiResource('health-wellness', HealthWellnessController::class);
         Route::apiResource('happy-hours', HappyHourController::class);
         Route::apiResource('news', NewsController::class);
+        Route::apiResource('advertisements', AdvertisementController::class);
+        Route::post('settings', [SettingController::class, 'store']);
+        Route::get('settings/{key}', [SettingController::class, 'show']);
+        Route::delete('settings/{key}', [SettingController::class, 'destroy']);
     });

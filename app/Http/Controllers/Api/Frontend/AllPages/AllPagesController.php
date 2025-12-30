@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Helpers\ApiResponse;
 use Illuminate\Http\Request;
 use App\Models\MusicConcert;
+use App\Models\Advertisement;
 use App\Repositories\Admin\ArtFair\ArtFairRepository;
 use App\Repositories\Admin\FarmerMarket\FarmerMarketRepository;
 use App\Repositories\Admin\Porchfest\PorchfestRepository;
@@ -23,6 +24,7 @@ use App\Resources\Website\AllPages\MusicConcert\MusicConcertResource;
 use App\Resources\Website\AllPages\News\NewsResource;
 use App\Resources\Website\AllPages\Nightlife\NightlifeResource;
 use App\Resources\Website\AllPages\Porchfest\PorchfestResource;
+use App\Resources\Website\AllPages\Advertisement\AdvertisementResource;
 
 class AllPagesController extends Controller
 {
@@ -157,5 +159,9 @@ class AllPagesController extends Controller
             NewsResource::collection($items),
             'News list retrieved'
         );
+    }
+    public function advertisements(Request $request) {
+        $allAdvertisements = Advertisement::get();
+        return ApiResponse::collection(AdvertisementResource::collection($allAdvertisements),'Advertisement retrived');
     }
 }
