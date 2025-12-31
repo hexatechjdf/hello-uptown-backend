@@ -15,10 +15,7 @@ class FarmerMarketRepository
                 $q->where('heading', 'like', "%{$s}%")
                   ->orWhere('subheading', 'like', "%{$s}%");
             })
-            ->orderBy(
-                $filters['sort_by'] ?? 'date',
-                $filters['sort_dir'] ?? 'desc'
-            )
+            ->orderBy($filters['sort_by'] ?? 'next_market_date', $filters['sort_dir'] ?? 'desc')
             ->paginate($filters['per_page'] ?? 10);
     }
 
@@ -30,7 +27,7 @@ class FarmerMarketRepository
     public function update(FarmerMarket $market, array $data)
     {
         $market->update($data);
-        return $market;
+        return $market->fresh();
     }
 
     public function delete(FarmerMarket $market)
@@ -38,4 +35,3 @@ class FarmerMarketRepository
         return $market->delete();
     }
 }
-?>

@@ -3,27 +3,59 @@
 namespace App\Repositories\Admin;
 
 use App\Models\MusicConcert;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class MusicConcertRepository
 {
-   public function query()
+    public function paginate(array $filters = []): LengthAwarePaginator
     {
-        return MusicConcert::query();
+        $query = MusicConcert::with('category');
+
+        if (!empty($filters['search'])) {
+            $query->where(function ($q) use ($filters) {
+                $q->where('main_heading', 'like', "%{$filters['search']}%")
+                  ->orWhere('artist', 'like', "%{$filters['search']}%");
+            });
+        }
+
+        if (!empty($filters['status'])) {
+            $query->where('status', $filters['status']);
+        }
+
+        if (!empty($filters['category_id'])) {
+            $query->where('category_id', $filters['category_id']);
+        }
+
+        if (isset($filters['featured'])) {
+            $query->where('featured', $filters['featured']);
+        }
+
+        $query->orderBy(
+            $filters['sortBy'] ?? 'event_date',
+            $filters['order'] ?? 'desc'
+        );
+
+        return $query->paginate($filters['perPage'] ?? 10);
     }
 
-    public function create(array $data)
+    public function find(int $id): ?MusicConcert
+    {
+        return MusicConcert::with('category')->find($id);
+    }
+
+    public function create(array $data): MusicConcert
     {
         return MusicConcert::create($data);
     }
 
-    public function update(MusicConcert $concert, array $data)
+    public function update(MusicConcert $concert, array $data): MusicConcert
     {
         $concert->update($data);
-        return $concert;
+        return $concert->fresh(['category']);
     }
 
-    public function delete(MusicConcert $concert)
+    public function delete(MusicConcert $concert): bool
     {
-        return $concert->delete();
+        return (bool) $concert->delete();
     }
 }

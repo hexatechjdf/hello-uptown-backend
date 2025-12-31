@@ -10,18 +10,27 @@ class MusicConcertResource extends JsonResource
     {
         return [
             'id' => $this->id,
+
+            'category' => [
+                'id' => $this->category?->id,
+                'name' => $this->category?->name,
+            ],
             'mainHeading' => $this->main_heading,
-            'subHeading' => $this->sub_heading,
+            'artist'      => $this->artist,
             'description' => $this->event_description,
-            'imageUrl' => $this->image ? asset('storage/' . $this->image) : null,
-            'availableAttendees' => $this->available_attendees,
-            'address' => $this->address,
-            'latitude' => $this->latitude,
-            'longitude' => $this->longitude,
-            'website' => $this->website,
-            'status' => $this->status,
-            'eventDate' => $this->event_date,
+            'imageUrl'    => $this->image,
+            'location'       => $this->address,
+            'directionLink' => $this->direction_link,
+            'time'      => $this->time_json,
+            'eventDate'=> $this->event_date,
+            'attendees' => $this->available_attendees,
+            'price'     => $this->price,
+            'websiteLink' => $this->website,
+            'ticketLink'  => $this->ticket_link,
+            'status'   => $this->status,
+            'featured' => $this->featured,
             'createdAt' => $this->created_at,
+            'updatedAt' => $this->updated_at,
         ];
     }
 }

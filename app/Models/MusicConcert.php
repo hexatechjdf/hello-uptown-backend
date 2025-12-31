@@ -11,22 +11,34 @@ class MusicConcert extends Model
 
     protected $fillable = [
         'main_heading',
-        'sub_heading',
+        'category_id',
+        'artist',
         'event_description',
         'image',
         'available_attendees',
+        'price',
         'address',
+        'direction_link',
         'latitude',
         'longitude',
-        // 'place_id',
         'website',
+        'ticket_link',
+        'time_json',
         'status',
+        'featured',
         'event_date',
     ];
 
     protected $casts = [
         'event_date' => 'date',
-        'latitude'   => 'decimal:2',
-        'longitude'  => 'decimal:2',
+        'time_json'  => 'array',
+        'featured'   => 'boolean',
+        'latitude'   => 'decimal:7',
+        'longitude'  => 'decimal:7',
     ];
+
+     public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
 }

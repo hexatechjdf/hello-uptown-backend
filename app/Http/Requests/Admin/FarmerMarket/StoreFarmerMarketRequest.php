@@ -1,10 +1,11 @@
 <?php
+
 namespace App\Http\Requests\Admin\FarmerMarket;
 
-use App\Helpers\ImageHelper;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Foundation\Http\FormRequest;
+
 class StoreFarmerMarketRequest extends FormRequest
 {
     public function authorize() { return true; }
@@ -12,50 +13,32 @@ class StoreFarmerMarketRequest extends FormRequest
     public function rules()
     {
         return [
+            'category_id' => 'required|exists:categories,id',
             'heading' => 'required|string|max:255',
             'subheading' => 'nullable|string|max:255',
             'description' => 'nullable|string',
-            'image'             => 'nullable|url',
+            'image' => 'nullable|url',
             'available_vendors' => 'nullable|integer',
-            'tags' => 'nullable|array',
-            'sub_tags' => 'nullable|array',
+            'specialization' => 'nullable|string',
+            'features' => 'nullable|array',
             'address' => 'nullable|string',
+            'direction_link' => 'nullable|url',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
             'website' => 'nullable|url',
-            'map_meta' => 'nullable|array',
-            'date' => 'required|date',
-            'day' => 'nullable|string',
-            'start_time' => 'nullable',
-            'end_time' => 'nullable',
+            'schedule' => 'nullable|array',
+            'next_market_date' => 'nullable|date',
             'featured' => 'boolean',
             'status' => 'required|in:draft,scheduled,active,expired',
         ];
     }
 
-
-     public function withValidator(Validator $validator)
+    protected function failedValidation(Validator $validator)
     {
-        // $validator->after(function ($validator) {
-
-        //     if (!$this->filled('image')) {
-        //         return;
-        //     }
-        //     $error = ImageHelper::validateImageDimensions($this->image,5306,3770);
-        //     if ($error) {
-        //         $validator->errors()->add('image', $error);
-        //     }
-        // });
+        throw new HttpResponseException(response()->json([
+            'status' => false,
+            'message' => 'Validation error',
+            'errors' => $validator->errors()
+        ], 422));
     }
-        protected function failedValidation(Validator $validator)
-{
-    throw new HttpResponseException(response()->json([
-        'status' => false,
-        'message' => 'Validation error',
-        'errors' => $validator->errors()
-    ], 422));
 }
-
-}
-
-?>

@@ -139,7 +139,6 @@ Route::prefix('admin')
         Route::get('/user/{id}', [BusinessController::class, 'user']);
         Route::delete('/user-delete/{id}', [BusinessController::class, 'userDelete']);
         Route::post('/user-update', [BusinessController::class, 'userUpdate']);
-        Route::post('/user-notifications', [BusinessController::class, 'userNotification']);
 
         Route::get('contact-messages', [AdminContactMessageController::class, 'index']);
         Route::get('contact-messages/{id}', [AdminContactMessageController::class, 'show']);

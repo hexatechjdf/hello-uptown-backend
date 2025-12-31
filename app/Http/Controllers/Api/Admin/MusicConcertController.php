@@ -12,24 +12,9 @@ use Illuminate\Support\Facades\Validator;
 
 class MusicConcertController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, MusicConcertService $service)
     {
-        $query = MusicConcert::query();
-
-        if ($request->search) {
-            $query->where('main_heading', 'like', "%{$request->search}%");
-        }
-
-        if ($request->status) {
-            $query->where('status', $request->status);
-        }
-
-        $query->orderBy(
-            $request->get('sortBy', 'event_date'),
-            $request->get('order', 'desc')
-        );
-
-        $concerts = $query->paginate($request->get('perPage', 10));
+        $concerts = $service->paginate($request->all());
 
         return ApiResponse::resource(
             MusicConcertResource::collection($concerts),
@@ -49,23 +34,25 @@ class MusicConcertController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'main_heading'        => 'required|string|max:255',
-            'sub_heading'         => 'nullable|string',
+           'category_id'         => 'required|exists:categories,id',
+            'artist'              => 'nullable|string|max:255',
             'event_description'   => 'required|string',
-            'image'               => 'nullable|url', // URL validation
+            'image'               => 'nullable|url',
             'available_attendees' => 'nullable|integer',
+            'price'               => 'nullable|numeric',
             'address'             => 'nullable|string',
+            'direction_link'      => 'nullable|url',
             'latitude'            => 'nullable|numeric',
             'longitude'           => 'nullable|numeric',
             'website'             => 'nullable|url',
+            'ticket_link'         => 'nullable|url',
+            'time_json'           => 'nullable|array',
             'event_date'          => 'nullable|date',
             'status'              => 'required|in:draft,active,scheduled,expired',
+            'featured'            => 'boolean',
         ]);
         if ($validator->fails()) {
-            return ApiResponse::error(
-                'Validation failed',
-                $validator->errors(),
-                422
-            );
+            return ApiResponse::error('Validation failed', $validator->errors(), 422);
         }
 
         $concert = $service->store($validator->validated());
@@ -80,23 +67,26 @@ class MusicConcertController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'main_heading'        => 'sometimes|required|string|max:255',
-            'sub_heading'         => 'sometimes|nullable|string',
+            'category_id'         => 'sometimes|required|exists:categories,id',
+            'artist'              => 'sometimes|nullable|string|max:255',
             'event_description'   => 'sometimes|required|string',
-            'image'               => 'sometimes|nullable|url', // URL validation
+            'image'               => 'sometimes|nullable|url',
             'available_attendees' => 'sometimes|nullable|integer',
+            'price'               => 'sometimes|nullable|numeric',
             'address'             => 'sometimes|nullable|string',
+            'direction_link'      => 'sometimes|nullable|url',
             'latitude'            => 'sometimes|nullable|numeric',
             'longitude'           => 'sometimes|nullable|numeric',
             'website'             => 'sometimes|nullable|url',
+            'ticket_link'         => 'sometimes|nullable|url',
+            'time_json'           => 'sometimes|nullable|array',
             'event_date'          => 'sometimes|nullable|date',
             'status'              => 'sometimes|required|in:draft,active,scheduled,expired',
+            'featured'            => 'sometimes|boolean',
         ]);
+
         if ($validator->fails()) {
-            return ApiResponse::error(
-                'Validation failed',
-                $validator->errors(),
-                422
-            );
+            return ApiResponse::error('Validation failed', $validator->errors(), 422);
         }
         $concert = $service->update($musicConcert, $validator->validated());
 
@@ -106,9 +96,9 @@ class MusicConcertController extends Controller
         );
     }
 
-    public function destroy(MusicConcert $musicConcert)
+    public function destroy(MusicConcert $musicConcert, MusicConcertService $service)
     {
-        $musicConcert->delete();
+        $service->delete($musicConcert);
 
         return ApiResponse::success(null, 'Concert deleted');
     }

@@ -19,11 +19,11 @@ class MusicConcertResource extends JsonResource
             'location' => $this->address,
             'time' => $this->event_date,
             'attendance' => $this->available_attendees,
-            'price' => null,// no db field
-            'category' => "Music Concert",
+            'price' => $this->price,
+            'category' =>  $this->category?->name ?? null,
             'websiteUrl' => $this->website,
-            'directionsUrl' => $this->address,
-            'ticketUrl' => null,
+            'directionsUrl' => $this->direction_link,
+            'ticketUrl' => $this->ticket_link,
         ];
     }
 }
