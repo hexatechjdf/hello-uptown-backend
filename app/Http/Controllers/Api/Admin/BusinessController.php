@@ -7,9 +7,14 @@ use App\Services\Admin\BusinessService;
 use App\Resources\Admin\BusinessResource;
 use App\Helpers\ApiResponse;
 use App\Models\Business;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Resources\User\UserResource;
+
+use App\Resources\Admin\User\UserResource as AdminUserResource;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+
 class BusinessController extends Controller
 {
     public function __construct(
@@ -34,11 +39,13 @@ class BusinessController extends Controller
 
    public function store(Request $request)
     {
+        $userId = $request->user_id;
+        if (Business::where('user_id', $userId)->exists()) {
+            return ApiResponse::error('Business already exists against this user');
+        }
         $data = $request->validate([
-            // Required
-            'user_id'        => 'required|exists:users,id',
-            'business_name'  => 'required|string|max:255',
-            'slug'           => 'required|string|max:255|unique:businesses,slug',
+            'user_id'       => 'required|exists:users,id',
+            'business_name' => 'required|string|max:255',
 
             // Descriptions
             'short_description' => 'nullable|string',
@@ -55,14 +62,14 @@ class BusinessController extends Controller
             'cover_image' => 'nullable|string',
 
             // Contact & Location
-            'address'            => 'nullable|string',
-            'latitude'           => 'nullable|numeric',
-            'longitude'          => 'nullable|numeric',
-            'redemption_radius'  => 'nullable|integer',
-            'phone'              => 'nullable|string|max:50',
-            'email'              => 'nullable|email',
-            'website'            => 'nullable|url',
-            'opening_hours'      => 'nullable|string',
+            'address'           => 'nullable|string',
+            'latitude'          => 'nullable|numeric',
+            'longitude'         => 'nullable|numeric',
+            'redemption_radius' => 'nullable|integer',
+            'phone'             => 'nullable|string|max:50',
+            'email'             => 'nullable|email',
+            'website'           => 'nullable|url',
+            'opening_hours'     => 'nullable|string',
 
             // Social Links
             'facebook_link'  => 'nullable|url',
@@ -70,26 +77,34 @@ class BusinessController extends Controller
             'twitter_link'   => 'nullable|url',
 
             // Slider Settings
-            'slider_tagline'              => 'nullable|string',
-            'slider_section_text'         => 'nullable|string',
-            'slider_heading_one'          => 'nullable|string',
-            'slider_subheading'           => 'nullable|string',
-            'slider_short_description'    => 'nullable|string',
-            'slider_image'                => 'nullable|string',
-            'image_overlay_heading'       => 'nullable|string',
-            'image_overlay_heading2'      => 'nullable|string',
+            'slider_tagline'           => 'nullable|string',
+            'slider_section_text'      => 'nullable|string',
+            'slider_heading_one'       => 'nullable|string',
+            'slider_subheading'        => 'nullable|string',
+            'slider_short_description' => 'nullable|string',
+            'slider_image'             => 'nullable|string',
+            'image_overlay_heading'    => 'nullable|string',
+            'image_overlay_heading2'   => 'nullable|string',
 
-            'slider_text1'        => 'nullable|string',
-            'slider_text1_value'  => 'nullable|string',
-            'slider_text2'        => 'nullable|string',
-            'slider_text2_value'  => 'nullable|string',
-            'slider_text3'        => 'nullable|string',
-            'slider_text3_value'  => 'nullable|string',
+            'slider_text1'       => 'nullable|string',
+            'slider_text1_value' => 'nullable|string',
+            'slider_text2'       => 'nullable|string',
+            'slider_text2_value' => 'nullable|string',
+            'slider_text3'       => 'nullable|string',
+            'slider_text3_value' => 'nullable|string',
 
-            // Notification & Status
             'send_new_deals' => 'nullable|boolean',
             'status'         => 'nullable|boolean',
         ]);
+
+        $slug = Str::slug($data['business_name']);
+        if (Business::where('slug', $slug)->exists()) {
+            return ApiResponse::error(
+                'Business with this name already exists',
+                422
+            );
+        }
+        $data['slug'] = $slug;
 
         $business = $this->service->create($data);
 
@@ -108,12 +123,10 @@ class BusinessController extends Controller
             'Business details'
         );
     }
-
     public function update(Request $request, Business $business)
     {
         $data = $request->validate([
             'business_name' => 'sometimes|string|max:255',
-            'slug'          => 'sometimes|string|max:255|unique:businesses,slug,' . $business->id,
             // Descriptions
             'short_description' => 'sometimes|string',
             'long_description'  => 'sometimes|string',
@@ -163,6 +176,21 @@ class BusinessController extends Controller
             'status'         => 'sometimes|boolean',
         ]);
 
+            if (isset($data['business_name'])) {
+            $slug = Str::slug($data['business_name']);
+            $originalSlug = $slug;
+            $count = 1;
+
+            while (
+                Business::where('slug', $slug)
+                    ->where('id', '!=', $business->id)
+                    ->exists()
+            ) {
+                $slug = $originalSlug . '-' . $count++;
+            }
+            $data['slug'] = $slug;
+        }
+        // dd($data);
         $this->service->update($business, $data);
         $business->refresh();
 
@@ -170,6 +198,28 @@ class BusinessController extends Controller
             new BusinessResource($business),
             'Business updated successfully'
         );
+    }
+    
+    public function users(Request $request)
+    {
+        $users = User::get();
+        return ApiResponse::success(AdminUserResource::collection($users),'User list retrieved');
+    }
+
+    public function user($id)
+    {
+        $user = User::find($id);
+         return ApiResponse::resource(new AdminUserResource($user),'User information');
+    }
+
+    public function userDelete($id)
+    {
+        $user = User::find($id);
+        if(!$user){
+            return ApiResponse::error('User already deleted');
+        }
+        $user->delete();
+         return ApiResponse::resource(new AdminUserResource($user),'User deeted successfully');
     }
 
     public function destroy(Business $business)
@@ -181,7 +231,11 @@ class BusinessController extends Controller
 
     public function userUpdate(Request $request)
     {
-        $user = $request->user();
+        if($request->has('user_id') && $request->user_id !== null){
+            $user = User::find($request->user_id);
+        }else{
+            $user = $request->user();
+        }
 
         $validated = $request->validate([
             'first_name' => ['required', 'string', 'max:255'],

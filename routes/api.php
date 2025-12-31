@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\Admin\NightlifeController;
 use App\Http\Controllers\Api\Admin\AdvertisementController;
 use App\Http\Controllers\Api\Admin\SettingController;
 use App\Http\Controllers\Api\Admin\PorchfestController;
+use App\Http\Controllers\Api\Admin\ContactMessageController as AdminContactMessageController;
 use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\Category\CategoryController;
 use App\Http\Controllers\Api\Coupon\CouponController as ApiCouponController;
@@ -133,6 +134,16 @@ Route::middleware(['auth:sanctum', 'role:business_admin'])->group(function () {
 Route::prefix('admin')
     ->middleware(['auth:sanctum', 'role:superadmin'])
     ->group(function () {
+
+        Route::get('/users', [BusinessController::class, 'users']);
+        Route::get('/user/{id}', [BusinessController::class, 'user']);
+        Route::delete('/user-delete/{id}', [BusinessController::class, 'userDelete']);
+        Route::post('/user-update', [BusinessController::class, 'userUpdate']);
+        Route::post('/user-notifications', [BusinessController::class, 'userNotification']);
+
+        Route::get('contact-messages', [AdminContactMessageController::class, 'index']);
+        Route::get('contact-messages/{id}', [AdminContactMessageController::class, 'show']);
+        Route::delete('contact-messages/{id}', [AdminContactMessageController::class, 'destroy']);
 
         Route::get('/dashboard', [AdminDashboardController::class, 'index']);
         Route::apiResource('businesses', BusinessController::class);

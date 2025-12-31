@@ -24,8 +24,10 @@ class CheckBusinessIdMiddleware
         $roleName = $user->roles->first()?->name;
         // dd($businessIdParam, $businessIdAuthUser);
         if($roleName == "business_admin"){
-            if($businessIdParam !== $businessIdAuthUser){
+            if($businessIdParam !== null && $businessIdParam !== 0 && $businessIdParam !== $businessIdAuthUser ){
                 return response()->json(['message' => 'Forbidden'], 403);
+            }elseif($businessIdParam == null){
+                return $next($request);
             }
         }elseif ($roleName == "superadmin") {
             if(!$businessIdParam){

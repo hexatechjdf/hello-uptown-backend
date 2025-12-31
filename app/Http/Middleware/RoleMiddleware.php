@@ -20,7 +20,6 @@ class RoleMiddleware
         if (!$user) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
-
         if (!$user->roles()->whereIn('name', $roles)->exists()) {
             return response()->json(['message' => 'Forbidden'], 403);
         }
