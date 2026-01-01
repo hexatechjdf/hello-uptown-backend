@@ -7,17 +7,29 @@ class PorchfestRepository
 {
     public function list(array $filters)
     {
-        return Porchfest::query()
-            ->when($filters['search'] ?? null, fn ($q, $s) =>
-                $q->where('heading', 'like', "%$s%")
-            )
-            ->when($filters['status'] ?? null, fn ($q, $s) =>
-                $q->where('status', $s)
-            )
-            ->orderBy(
-                $filters['sort_by'] ?? 'event_date',
-                $filters['sort_order'] ?? 'desc'
-            )
+        $query = Porchfest::query();
+
+        if (!empty($filters['search'])) {
+            $query->where(function ($q) use ($filters) {
+                $q->where('title', 'like', "%{$filters['search']}%")
+                  ->orWhere('artist', 'like', "%{$filters['search']}%")
+                  ->orWhere('description', 'like', "%{$filters['search']}%");
+            });
+        }
+
+        if (!empty($filters['status'])) {
+            $query->where('status', $filters['status']);
+        }
+
+        if (!empty($filters['featured'])) {
+            $query->where('is_featured', filter_var($filters['featured'], FILTER_VALIDATE_BOOLEAN));
+        }
+
+        $sort = $filters['sort_order'] ?? 'desc';
+        $sortBy = $filters['sort_by'] ?? 'created_at';
+
+        return $query
+            ->orderBy($sortBy, $sort)
             ->paginate($filters['per_page'] ?? 10);
     }
 
@@ -37,5 +49,3 @@ class PorchfestRepository
         $porchfest->delete();
     }
 }
-
-?>

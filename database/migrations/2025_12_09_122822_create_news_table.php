@@ -13,27 +13,20 @@ return new class extends Migration
     {
         Schema::create('news', function (Blueprint $table) {
             $table->id();
-             $table->string('heading');
-            $table->string('subheading')->nullable();
+            $table->string('title');
             $table->text('description')->nullable();
+            $table->string('author')->nullable();
             $table->string('image')->nullable();
-            $table->integer('available_attendees')->nullable();
-            $table->string('address')->nullable();
-            $table->decimal('latitude', 10, 7)->nullable();
-            $table->decimal('longitude', 10, 7)->nullable();
-            $table->string('website')->nullable();
-            $table->date('date')->nullable();
-            $table->string('day')->nullable();
-            $table->time('start_time')->nullable();
-            $table->time('end_time')->nullable();
-            $table->enum('status', ['active','draft','expired'])->default('draft');
+            $table->string('slug')->unique()->nullable();
+            $table->boolean('featured')->default(false);
+            $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('set null');
+            $table->string('article_url')->nullable();
+            $table->dateTime('published_at')->nullable();
+            $table->enum('status', ['active', 'draft', 'expired', 'inactive'])->default('draft');
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('news');

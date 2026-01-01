@@ -8,20 +8,22 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class FarmerMarket extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'category_id',
         'heading',
-        'subheading',
         'description',
         'image',
         'available_vendors',
         'specialization',
         'features',
+        'price',
         'address',
         'direction_link',
         'latitude',
         'longitude',
         'website',
+        'ticket_link',
         'schedule',
         'next_market_date',
         'featured',
@@ -35,6 +37,7 @@ class FarmerMarket extends Model
         'latitude' => 'decimal:7',
         'longitude' => 'decimal:7',
         'next_market_date' => 'date',
+        'price' => 'decimal:2',
     ];
     public function category()
     {

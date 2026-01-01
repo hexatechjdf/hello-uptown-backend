@@ -14,18 +14,19 @@ class ArtFairResource extends JsonResource
             'slug'        => $this->slug,
             'title'       => $this->heading,
             'description' => $this->description,
-            'image'       => $this->image ?? null,
+            'image'       => $this->image ? asset($this->image) : null,
 
             'date' => $this->event_date
                 ? Carbon::parse($this->event_date)->format('l, F d, Y')
                 : null,
 
             'time' => $this->start_time
-                ? $this->start_time . ($this->end_time ? ' - ' . $this->end_time : '')
+                ? Carbon::parse($this->start_time)->format('g:i A') .
+                  ($this->end_time ? ' - ' . Carbon::parse($this->end_time)->format('g:i A') : '')
                 : null,
 
             'location'    => $this->address,
-            'artistCount' => $this->available_artist,
+            'artistCount' => $this->artist_count ?? $this->available_artist ?? 0,
             'isFeatured'  => (bool) $this->featured,
 
             'categories'  => $this->art_categories ?? [],
@@ -33,11 +34,13 @@ class ArtFairResource extends JsonResource
 
             'admission' => $this->admission_type === 'free'
                 ? 'Free'
-                : ($this->admission_amount ? '$' . $this->admission_amount : null),
+                : ($this->admission_amount ? '$' . number_format($this->admission_amount, 2) : null),
 
             'daysAway' => $this->event_date
                 ? Carbon::now()->diffInDays(Carbon::parse($this->event_date), false)
                 : null,
+
+            'directionLink' => $this->direction_link,
         ];
     }
 }

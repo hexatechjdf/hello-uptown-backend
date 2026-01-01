@@ -22,7 +22,7 @@ use App\Resources\Website\AllPages\HappyHour\HappyHourResource;
 use App\Resources\Website\AllPages\HealthWellness\HealthWellnessResource;
 use App\Resources\Website\AllPages\MusicConcert\MusicConcertResource;
 use App\Resources\Website\AllPages\News\NewsResource;
-use App\Resources\Website\AllPages\Nightlife\NightlifeResource;
+use App\Resources\Website\AllPages\NightLife\NightlifeResource;
 use App\Resources\Website\AllPages\Porchfest\PorchfestResource;
 use App\Resources\Website\AllPages\Advertisement\AdvertisementResource;
 
@@ -85,8 +85,8 @@ class AllPagesController extends Controller
         $service = app(DiningService::class);
 
         $dinings = $service->getAll(
-            $request->only(['search', 'status']),
-            $request->get('sort', 'date'),
+            $request->only(['search', 'status', 'category_id', 'featured', 'price_range']),
+            $request->get('sort', 'created_at'),
             $request->get('order', 'desc'),
             $request->get('perPage', 10)
         );
@@ -101,10 +101,10 @@ class AllPagesController extends Controller
         $service = app(NightlifeService::class);
 
         $nightlifes = $service->all(
-            $request->only(['search','status']),
-            $request->get('sort','date'),
-            $request->get('order','desc'),
-            $request->get('perPage',10)
+            $request->only(['search', 'status', 'category_id', 'featured']),
+            $request->get('sort', 'created_at'),
+            $request->get('order', 'desc'),
+            $request->get('perPage', 10)
         );
 
         return ApiResponse::collection(
@@ -117,10 +117,10 @@ class AllPagesController extends Controller
         $service = app(HealthWellnessService::class);
 
         $items = $service->all(
-            $request->only(['search','status']),
-            $request->get('sort','date'),
-            $request->get('order','desc'),
-            $request->get('perPage',10)
+            $request->only(['search', 'status', 'category_id', 'featured']),
+            $request->get('sort', 'created_at'),
+            $request->get('order', 'desc'),
+            $request->get('perPage', 10)
         );
 
         return ApiResponse::collection(
@@ -133,10 +133,10 @@ class AllPagesController extends Controller
         $service = app(HappyHourService::class);
 
         $items = $service->all(
-            $request->only(['search','status']),
-            $request->get('sort','date'),
-            $request->get('order','desc'),
-            $request->get('perPage',10)
+            $request->only(['search', 'status', 'category_id', 'featured']),
+            $request->get('sort', 'created_at'),
+            $request->get('order', 'desc'),
+            $request->get('perPage', 10)
         );
 
         return ApiResponse::collection(
@@ -149,10 +149,10 @@ class AllPagesController extends Controller
         $service = app(NewsService::class);
 
         $items = $service->all(
-            $request->only(['search','status']),
-            $request->get('sort','date'),
-            $request->get('order','desc'),
-            $request->get('perPage',10)
+            $request->only(['search', 'status', 'category_id', 'featured']),
+            $request->get('sort', 'published_at'),
+            $request->get('order', 'desc'),
+            $request->get('perPage', 10)
         );
 
         return ApiResponse::collection(
@@ -160,8 +160,9 @@ class AllPagesController extends Controller
             'News list retrieved'
         );
     }
+
     public function advertisements(Request $request) {
         $allAdvertisements = Advertisement::get();
-        return ApiResponse::collection(AdvertisementResource::collection($allAdvertisements),'Advertisement retrived');
+        return ApiResponse::collection(AdvertisementResource::collection($allAdvertisements), 'Advertisement retrieved');
     }
 }

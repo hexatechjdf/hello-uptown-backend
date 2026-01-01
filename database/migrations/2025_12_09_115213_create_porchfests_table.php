@@ -13,29 +13,27 @@ return new class extends Migration
     {
         Schema::create('porchfests', function (Blueprint $table) {
             $table->id();
-            $table->string('heading');
-            $table->string('subheading_primary')->nullable();
-            $table->string('subheading_secondary')->nullable();
-
+            $table->string('title');
+            $table->string('artist')->nullable();
             $table->longText('description')->nullable();
             $table->string('image')->nullable();
 
+            $table->string('slug')->unique()->nullable();
+            $table->boolean('is_featured')->default(false);
+            $table->string('direction_link')->nullable();
+            $table->integer('attendees')->default(0);
+
             $table->integer('available_seats')->nullable();
 
-            $table->json('categories')->nullable();
-            $table->json('features')->nullable();
+            $table->json('genre')->nullable();
+            $table->json('event_features')->nullable();
+            $table->json('time')->nullable();
 
-            $table->string('address')->nullable();
+            $table->string('location')->nullable();
             $table->decimal('latitude', 10, 7)->nullable();
             $table->decimal('longitude', 10, 7)->nullable();
 
-            $table->date('event_date');
-            $table->string('day')->nullable();
-            $table->time('start_time')->nullable();
-            $table->time('end_time')->nullable();
-
-            $table->enum('status', ['draft', 'scheduled', 'active', 'expired'])->default('draft');
-
+            $table->enum('status', ['draft', 'scheduled', 'active', 'expired', 'inactive'])->default('draft');
             $table->timestamps();
         });
     }

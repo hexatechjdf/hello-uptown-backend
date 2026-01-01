@@ -39,7 +39,6 @@ class ArtFairController extends Controller
     {
         $data = $this->service->prepareData($request->validated());
         $artFair = $this->repo->update($artFair, $data);
-
         return ApiResponse::resource(new ArtFairResource($artFair),'Art fair updated');
     }
 

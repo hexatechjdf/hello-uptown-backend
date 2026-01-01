@@ -10,35 +10,49 @@ class HealthWellnessResource extends JsonResource
 {
     public function toArray($request)
     {
-        // Handle features/header_tags - check if it's array or string
-        $features = [];
+        $priceData = $this->price ?? [];
+        $hasPrice = $priceData['hasPrice'] ?? false;
+        $originalPrice = $priceData['originalPrice'] ?? null;
+        $amount = $priceData['amount'] ?? null;
+        $durationData = $this->duration ?? [];
+        $durationValue = $durationData['value'] ?? null;
+        $durationUnit = $durationData['unit'] ?? null;
+        $daysLeft = $this->calculateDaysLeft($this->time);
 
-        if ($this->header_tags) {
-            if (is_string($this->header_tags)) {
-                // If it's a string, explode by comma
-                $features = array_map('trim', explode(',', $this->header_tags));
-            } elseif (is_array($this->header_tags)) {
-                // If it's already an array, use it directly
-                $features = $this->header_tags;
-                // Optionally trim all values if needed
-                $features = array_map('trim', $features);
-            }
-        }
         return [
             'id' => $this->id,
-            'slug' => Str::slug($this->heading),
-            'title' => $this->heading,
-            'businessName' => $this->subheading,
+            'slug' => $this->slug,
+            'title' => $this->title,
+            'businessName' => $this->provider_name,
             'description' => $this->description,
             'image' => $this->image ?? null,
-            'category' => $this->main_tags,
-            'location' => $this->address,
-            'daysLeft' => $this->date ? Carbon::now()->diffInDays(Carbon::parse($this->date), false) : null,
-            'originalPrice' => $this->actual_price,
-            'discountedPrice' => $this->discounted_price,
-            'features' => $features,
-            'directionsUrl' => $this->address,
-
+            'category' => $this->category ? $this->category->name : null,
+            'location' => $this->location,
+            'daysLeft' => $daysLeft,
+            'originalPrice' => $originalPrice,
+            'discountedPrice' => $amount,
+            'features' => $this->features ?? [],
+            'directionsUrl' => $this->direction_link,
+            'duration' => $durationValue && $durationUnit ? "$durationValue $durationUnit" : null,
+            'isFeatured' => (bool) $this->featured,
+            'timeSlots' => $this->time ?? null,
         ];
+    }
+
+    private function calculateDaysLeft($timeData): ?int
+    {
+        if (!$timeData || !isset($timeData['type'])) {
+            return null;
+        }
+
+        if ($timeData['type'] === 'startend' && isset($timeData['endDate'])) {
+            return Carbon::now()->diffInDays(Carbon::parse($timeData['endDate']), false);
+        }
+
+        if ($timeData['type'] === 'days' && isset($timeData['days'][0]['startDate'])) {
+            return Carbon::now()->diffInDays(Carbon::parse($timeData['days'][0]['startDate']), false);
+        }
+
+        return null;
     }
 }

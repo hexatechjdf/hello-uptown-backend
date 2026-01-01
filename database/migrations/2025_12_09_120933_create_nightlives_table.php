@@ -13,22 +13,22 @@ return new class extends Migration
     {
         Schema::create('nightlives', function (Blueprint $table) {
             $table->id();
-             $table->string('heading');
-            $table->string('subheading')->nullable();
+            $table->string('title');
+            $table->string('venue_name')->nullable();
+            $table->string('phone')->nullable();
             $table->text('description')->nullable();
             $table->string('image')->nullable();
-            $table->json('main_tags')->nullable();
-            $table->json('header_tags')->nullable();
-            $table->decimal('actual_price', 10, 2)->nullable();
-            $table->decimal('discounted_price', 10, 2)->nullable();
-            $table->string('address')->nullable();
+            $table->string('slug')->unique()->nullable();
+            $table->boolean('featured')->default(false);
+            $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('set null');
+            $table->json('tags')->nullable();
+            $table->json('time')->nullable();
+            $table->json('price')->nullable();
+            $table->string('location')->nullable();
+            $table->string('direction_link')->nullable();
             $table->decimal('latitude', 10, 7)->nullable();
             $table->decimal('longitude', 10, 7)->nullable();
-            $table->date('date')->nullable();
-            $table->string('day')->nullable();
-            $table->time('start_time')->nullable();
-            $table->time('end_time')->nullable();
-            $table->enum('status', ['active','draft','expired'])->default('draft');
+            $table->enum('status', ['active', 'draft', 'expired', 'inactive'])->default('draft');
             $table->timestamps();
         });
     }

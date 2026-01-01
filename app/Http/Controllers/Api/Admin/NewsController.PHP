@@ -22,10 +22,10 @@ class NewsController extends Controller
     public function index(Request $request)
     {
         $items = $this->service->all(
-            $request->only(['search','status']),
-            $request->get('sort','date'),
-            $request->get('order','desc'),
-            $request->get('perPage',10)
+            $request->only(['search', 'status', 'category_id', 'featured']),
+            $request->get('sort', 'published_at'),
+            $request->get('order', 'desc'),
+            $request->get('perPage', 10)
         );
 
         return ApiResponse::collection(NewsResource::collection($items), 'News list retrieved');
@@ -33,20 +33,20 @@ class NewsController extends Controller
 
     public function store(NewsRequest $request)
     {
-        $item = $this->service->create($request->all());
+        $item = $this->service->create($request->validated()); // Changed from all() to validated()
         return ApiResponse::resource(new NewsResource($item), 'News created successfully');
     }
 
     public function show($id)
     {
         $item = $this->service->find($id);
-        return ApiResponse::resource(new NewsResource($item));
+        return ApiResponse::resource(new NewsResource($item), 'News details retrieved');
     }
 
     public function update(NewsRequest $request, $id)
     {
         $item = $this->service->find($id);
-        $item = $this->service->update($item, $request->all());
+        $item = $this->service->update($item, $request->validated()); // Changed from all() to validated()
         return ApiResponse::resource(new NewsResource($item), 'News updated successfully');
     }
 

@@ -10,22 +10,23 @@ class NewsResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'heading' => $this->heading,
-            'subheading' => $this->subheading,
+            'title' => $this->title,
             'description' => $this->description,
-            'imageUrl' => $this->image, // Changed from imageUrl to match request field 'image'
-            'availableAttendees' => $this->available_attendees, // Added from request
-            'address' => $this->address,
-            'latitude' => $this->latitude,
-            'longitude' => $this->longitude,
-            'website' => $this->website, // Added from request
-            'date' => $this->date?->format('Y-m-d'),
-            'day' => $this->day,
-            'startTime' => $this->start_time, // Formatted to match request format
-            'endTime' => $this->end_time, // Formatted to match request format
+            'author' => $this->author,
+            'imageUrl' => $this->image ?? null,
+            'slug' => $this->slug,
+            'featured' => (bool) $this->featured,
+            'category' => $this->category ? [
+                'id' => $this->category->id,
+                'name' => $this->category->name,
+                'slug' => $this->category->slug
+            ] : null,
+            'category_id' => $this->category_id,
+            'articleUrl' => $this->article_url,
+            'publishedAt' => $this->published_at,
             'status' => $this->status,
-            'createdAt' => $this->created_at->toDateTimeString(),
-            'updatedAt' => $this->updated_at->toDateTimeString(),
+            'createdAt' => $this->created_at->format('Y-m-d\TH:i:s.v\Z'),
+            'updatedAt' => $this->updated_at->format('Y-m-d\TH:i:s.v\Z'),
         ];
     }
 }

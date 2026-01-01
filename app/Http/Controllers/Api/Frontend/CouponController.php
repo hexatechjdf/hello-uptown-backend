@@ -4,26 +4,21 @@ namespace App\Http\Controllers\Api\Frontend;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Services\Coupon\CouponService;
 use App\Helpers\ApiResponse;
-use App\Models\Coupon;
-use App\Repositories\Coupon\CouponRepository;
+use App\Repositories\Website\CouponRepository;
 use App\Resources\Coupon\CouponResource;
 
 class CouponController extends Controller
 {
-    protected $service;
     protected $repo;
 
-    public function __construct(CouponService $service, CouponRepository $repo)
+    public function __construct(CouponRepository $repo)
     {
-        $this->service = $service;
         $this->repo = $repo;
     }
 
     /**
      * List all coupons with filters, search, sorting, pagination
-     * Also return 3 card counts
      */
     public function index(Request $request)
     {
@@ -57,10 +52,43 @@ class CouponController extends Controller
 
     public function show($id)
     {
-        $Coupon = Coupon::where('id', $id)->where('is_active', true)->first();
-        if (!$Coupon) {
+        $coupon = $this->repo->findActive($id);
+
+        if (!$coupon) {
             return ApiResponse::error('Coupon not found', 404);
         }
-        return ApiResponse::collection(CouponResource::collection(collect([$Coupon])), 'Coupon fetched successfully');
+
+        return ApiResponse::success(
+            new CouponResource($coupon),
+            'Coupon fetched successfully'
+        );
+    }
+
+    /**
+     * New method: Get featured coupons
+     */
+    public function featured(Request $request)
+    {
+        $limit = $request->input('limit', 8);
+        $coupons = $this->repo->getFeaturedCoupons($limit);
+
+        return ApiResponse::success(
+            CouponResource::collection($coupons),
+            'Featured coupons retrieved successfully'
+        );
+    }
+
+    /**
+     * New method: Get expiring soon coupons
+     */
+    public function expiringSoon(Request $request)
+    {
+        $limit = $request->input('limit', 10);
+        $coupons = $this->repo->getExpiringSoon($limit);
+
+        return ApiResponse::success(
+            CouponResource::collection($coupons),
+            'Expiring soon coupons retrieved successfully'
+        );
     }
 }

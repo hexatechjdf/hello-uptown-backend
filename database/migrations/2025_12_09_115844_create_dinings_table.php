@@ -6,29 +6,28 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('dinings', function (Blueprint $table) {
             $table->id();
-            $table->string('heading');
+            $table->string('title');
             $table->longText('description')->nullable();
             $table->string('image')->nullable();
-            // Arrays
-            $table->json('tags')->nullable();
-            $table->string('contact_number', 20)->nullable();
-            $table->decimal('price', 10, 2)->nullable();
-            $table->string('address')->nullable();
+            $table->string('slug')->unique()->nullable();
+            $table->boolean('is_featured')->default(false);
+            $table->string('direction_link')->nullable();
+            $table->string('phone')->nullable();
+            $table->json('cuisine_types')->nullable();
+            $table->json('time')->nullable();
+
+            $table->string('price_range')->nullable();
+            $table->string('location')->nullable();
             $table->decimal('latitude', 10, 7)->nullable();
             $table->decimal('longitude', 10, 7)->nullable();
-            // Date & time
-            $table->date('date')->nullable();
-            $table->string('day', 20)->nullable();
-            $table->time('start_time')->nullable();
-            $table->time('end_time')->nullable();
-            $table->enum('status', ['active', 'draft', 'expired'])->default('draft');
+            $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('set null');
+
+            $table->enum('status', ['active', 'draft', 'expired', 'inactive'])->default('draft');
+
             $table->timestamps();
         });
     }

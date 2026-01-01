@@ -3,35 +3,84 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class HealthWellness extends Model
 {
     protected $fillable = [
-        'heading',
-        'subheading',
+        'title',
+        'provider_name',
         'description',
         'image',
-        'main_tags',
-        'header_tags',
-        'actual_price',
-        'discounted_price',
-        'address',
+        'slug',
+        'featured',
+        'category_id',
+        'features',
+        'time',
+        'duration',
+        'price',
+        'location',
+        'direction_link',
         'latitude',
         'longitude',
-        'date',
-        'day',
-        'start_time',
-        'end_time',
         'status',
     ];
 
     protected $casts = [
-        'main_tags' => 'array',
-        'header_tags' => 'array',
-        'actual_price' => 'decimal:2',
-        'discounted_price' => 'decimal:2',
+        'features' => 'array',
+        'time' => 'array',
+        'duration' => 'array',
+        'price' => 'array',
         'latitude' => 'decimal:7',
         'longitude' => 'decimal:7',
-        'date' => 'date',
+        'featured' => 'boolean',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($healthWellness) {
+            $healthWellness->slug = $healthWellness->generateUniqueSlug();
+        });
+
+        static::updating(function ($healthWellness) {
+            if ($healthWellness->isDirty('title')) {
+                $healthWellness->slug = $healthWellness->generateUniqueSlug();
+            }
+        });
+    }
+
+    protected function generateUniqueSlug()
+    {
+        $slug = Str::slug($this->title);
+        $originalSlug = $slug;
+        $count = 1;
+
+        while (static::where('slug', $slug)->where('id', '!=', $this->id)->exists()) {
+            $slug = $originalSlug . '-' . $count++;
+        }
+
+        return $slug;
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function getOriginalPriceAttribute()
+    {
+        return $this->price['originalPrice'] ?? null;
+    }
+
+    public function getAmountAttribute()
+    {
+        return $this->price['amount'] ?? null;
+    }
+
+    public function getHasPriceAttribute()
+    {
+        return $this->price['hasPrice'] ?? false;
+    }
 }

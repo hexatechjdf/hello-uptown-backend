@@ -13,17 +13,28 @@ class NewsRepository
         $this->model = $model;
     }
 
-    public function all($filters = [], $sort = 'date', $order = 'desc', $perPage = 10)
+    public function all($filters = [], $sort = 'published_at', $order = 'desc', $perPage = 10)
     {
-        $query = $this->model->query();
+        $query = $this->model->with('category');
 
         if (!empty($filters['search'])) {
-            $query->where('heading', 'like', "%{$filters['search']}%")
-                  ->orWhere('subheading', 'like', "%{$filters['search']}%");
+            $query->where(function ($q) use ($filters) {
+                $q->where('title', 'like', "%{$filters['search']}%")
+                  ->orWhere('description', 'like', "%{$filters['search']}%")
+                  ->orWhere('author', 'like', "%{$filters['search']}%");
+            });
         }
 
         if (!empty($filters['status'])) {
             $query->where('status', $filters['status']);
+        }
+
+        if (!empty($filters['category_id'])) {
+            $query->where('category_id', $filters['category_id']);
+        }
+
+        if (!empty($filters['featured'])) {
+            $query->where('featured', filter_var($filters['featured'], FILTER_VALIDATE_BOOLEAN));
         }
 
         return $query->orderBy($sort, $order)->paginate($perPage);
@@ -31,7 +42,7 @@ class NewsRepository
 
     public function find($id)
     {
-        return $this->model->findOrFail($id);
+        return $this->model->with('category')->findOrFail($id);
     }
 
     public function create(array $data)

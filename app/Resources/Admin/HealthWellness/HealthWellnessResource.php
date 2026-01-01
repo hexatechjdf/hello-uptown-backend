@@ -10,24 +10,36 @@ class HealthWellnessResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'heading' => $this->heading,
-            'subheading' => $this->subheading,
+            'title' => $this->title,
+            'providerName' => $this->provider_name,
             'description' => $this->description,
-            'imageUrl' => $this->imageUrl,
-            'mainTags' => $this->main_tags,
-            'headerTags' => $this->header_tags,
-            'actualPrice' => $this->actual_price,
-            'discountedPrice' => $this->discounted_price,
-            'address' => $this->address,
+            'image' => $this->image,
+            'slug' => $this->slug,
+            'featured' => (bool) $this->featured,
+            'category' => $this->category ? [
+                'id' => $this->category->id,
+                'name' => $this->category->name,
+                'slug' => $this->category->slug
+            ] : null,
+            'category_id' => $this->category_id,
+            'features' => $this->features ?? [],
+            'location' => $this->location,
+            'directionLink' => $this->direction_link,
             'latitude' => $this->latitude,
             'longitude' => $this->longitude,
-            'date' => $this->date?->format('Y-m-d'),
-            'day' => $this->day,
-            'startTime' => $this->start_time,
-            'endTime' => $this->end_time,
+            'duration' => $this->duration ?? [
+                'value' => null,
+                'unit' => null
+            ],
+            'price' => $this->price ?? [
+                'hasPrice' => false,
+                'originalPrice' => null,
+                'amount' => null
+            ],
+            'time' => $this->time ?? null,
             'status' => $this->status,
-            'createdAt' => $this->created_at->toDateTimeString(),
-            'updatedAt' => $this->updated_at->toDateTimeString(),
+            'createdAt' => $this->created_at->format('Y-m-d\TH:i:s.v\Z'),
+            'updatedAt' => $this->updated_at->format('Y-m-d\TH:i:s.v\Z'),
         ];
     }
 }

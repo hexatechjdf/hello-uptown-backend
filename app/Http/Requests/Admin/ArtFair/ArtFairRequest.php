@@ -2,10 +2,10 @@
 
 namespace App\Http\Requests\Admin\ArtFair;
 
-use App\Helpers\ImageHelper;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
+
 class ArtFairRequest extends FormRequest
 {
     public function authorize(): bool
@@ -19,41 +19,41 @@ class ArtFairRequest extends FormRequest
             'heading'           => 'required|string|max:255',
             'description'       => 'nullable|string',
             'image'             => 'nullable|url',
-            'available_artist'  => 'nullable|integer',
+            'featured'          => 'nullable|boolean',
+            'direction_link'    => 'nullable|url',
+            'available_artist'  => 'nullable|integer|min:0',
+            'artist_count'      => 'nullable|integer|min:0',
             'art_categories'    => 'nullable|array',
+            'art_categories.*'  => 'nullable|string',
             'event_features'    => 'nullable|array',
+            'event_features.*'  => 'nullable|string',
             'admission_type'    => 'required|in:free,paid',
             'admission_amount'  => 'required_if:admission_type,paid|nullable|numeric|min:0',
             'address'           => 'nullable|string',
-            'latitude'          => 'nullable|numeric',
-            'longitude'         => 'nullable|numeric',
+            'latitude'          => 'nullable|numeric|between:-90,90',
+            'longitude'         => 'nullable|numeric|between:-180,180',
             'event_date'        => 'required|date',
             'day'               => 'nullable|string',
-            'start_time'        => 'nullable',
-            'end_time'          => 'nullable',
+            'start_time'        => 'nullable|date_format:H:i',
+            'end_time'          => 'nullable|date_format:H:i|after_or_equal:start_time',
             'status'            => 'required|in:draft,scheduled,active,expired',
         ];
     }
 
-
-     public function withValidator(Validator $validator)
+    public function messages(): array
     {
-        // $validator->after(function ($validator) {
-        //     if (!$this->filled('image')) {
-        //         return;
-        //     }
-        //     $error = ImageHelper::validateImageDimensions($this->image,5306,3770);
-        //     if ($error) {
-        //         $validator->errors()->add('image', $error);
-        //     }
-        // });
+        return [
+            'end_time.after_or_equal' => 'End time must be after or equal to start time.',
+            'admission_amount.required_if' => 'Admission amount is required when admission type is paid.',
+        ];
     }
-        protected function failedValidation(Validator $validator)
-        {
-            throw new HttpResponseException(response()->json([
-                'status' => false,
-                'message' => 'Validation error',
-                'errors' => $validator->errors()
-            ], 422));
-        }
+
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->json([
+            'status' => false,
+            'message' => 'Validation error',
+            'errors' => $validator->errors()
+        ], 422));
+    }
 }

@@ -3,31 +3,64 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class News extends Model
 {
-     protected $fillable = [
-        'heading',
-        'subheading',
+    protected $fillable = [
+        'title',
         'description',
+        'author',
         'image',
-        'available_attendees',
-        'address',
-        'latitude',
-        'longitude',
-        'website',
-        'date',
-        'day',
-        'start_time',
-        'end_time',
+        'slug',
+        'featured',
+        'category_id',
+        'article_url',
+        'published_at',
         'status',
     ];
 
     protected $casts = [
-        'available_attendees' => 'integer',
-        'latitude' => 'decimal:7',
-        'longitude' => 'decimal:7',
-        'date' => 'date',
+        'featured' => 'boolean',
+        'published_at' => 'datetime',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($news) {
+            $news->slug = $news->generateUniqueSlug();
+        });
+
+        static::updating(function ($news) {
+            if ($news->isDirty('title')) {
+                $news->slug = $news->generateUniqueSlug();
+            }
+        });
+    }
+
+    protected function generateUniqueSlug()
+    {
+        $slug = Str::slug($this->title);
+        $originalSlug = $slug;
+        $count = 1;
+
+        while (static::where('slug', $slug)->where('id', '!=', $this->id)->exists()) {
+            $slug = $originalSlug . '-' . $count++;
+        }
+
+        return $slug;
+    }
+
+    // Relationship to Category
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function getPublishedAtAttribute($value)
+    {
+        return $value ? \Carbon\Carbon::parse($value)->format('Y-m-d\TH:i:s.v\Z') : null;
+    }
 }

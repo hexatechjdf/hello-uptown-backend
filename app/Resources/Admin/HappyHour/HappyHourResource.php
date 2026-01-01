@@ -10,23 +10,25 @@ class HappyHourResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'heading' => $this->heading,
-            'imageUrl' => $this->imageUrl,
-            'happyHoursDeals' => $this->happy_hours_deals,
-            'actualPrice' => $this->actual_price,
-            'discountedPrice' => $this->discounted_price,
-            'specialOfferText' => $this->special_offer_text,
+            'title' => $this->title,
+            'imageUrl' => $this->image,
             'address' => $this->address,
-            'latitude' => $this->latitude,
-            'longitude' => $this->longitude,
-            'contactNumber' => $this->contact_number,
-            'date' => $this->date?->format('Y-m-d'),
-            'day' => $this->day,
-            'startTime' => $this->start_time,
-            'endTime' => $this->end_time,
+            'phone' => $this->phone,
+            'slug' => $this->slug,
+            'featured' => (bool) $this->featured,
+            'category' => $this->category ? [
+                'id' => $this->category->id,
+                'name' => $this->category->name,
+                'slug' => $this->category->slug
+            ] : null,
+            'category_id' => $this->category_id,
+            'openHours' => $this->open_hours ?? [],
+            'deals' => $this->deals ?? [],
+            'specialOffer' => $this->special_offer,
+            'directionLink' => $this->direction_link,
             'status' => $this->status,
-            'createdAt' => $this->created_at->toDateTimeString(),
-            'updatedAt' => $this->updated_at->toDateTimeString(),
+            'createdAt' => $this->created_at->format('Y-m-d\TH:i:s.v\Z'),
+            'updatedAt' => $this->updated_at->format('Y-m-d\TH:i:s.v\Z'),
         ];
     }
 }

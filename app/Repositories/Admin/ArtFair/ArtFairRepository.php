@@ -1,6 +1,7 @@
 <?php
 namespace App\Repositories\Admin\ArtFair;
 use App\Models\ArtFair;
+
 class ArtFairRepository
 {
     public function list(array $filters)
@@ -15,9 +16,16 @@ class ArtFairRepository
             $query->where('status', $filters['status']);
         }
 
+        if (!empty($filters['featured'])) {
+            $query->where('featured', filter_var($filters['featured'], FILTER_VALIDATE_BOOLEAN));
+        }
+
+        $sort = $filters['sort'] ?? 'desc';
+        $sortBy = $filters['sort_by'] ?? 'event_date';
+
         return $query
-            ->orderBy('event_date', $filters['sort'] ?? 'desc')
-            ->paginate(10);
+            ->orderBy($sortBy, $sort)
+            ->paginate($filters['per_page'] ?? 10);
     }
 
     public function create(array $data)
@@ -36,4 +44,3 @@ class ArtFairRepository
         $artFair->delete();
     }
 }
-?>

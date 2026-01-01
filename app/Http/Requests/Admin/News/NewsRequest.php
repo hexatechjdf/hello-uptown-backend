@@ -2,10 +2,10 @@
 
 namespace App\Http\Requests\Admin\News;
 
-use App\Helpers\ImageHelper;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\Rule;
 
 class NewsRequest extends FormRequest
 {
@@ -17,35 +17,23 @@ class NewsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'heading' => 'required|string|max:255',
-            'subheading' => 'nullable|string|max:255',
+            'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-             'image'             => 'nullable|url',
-            'available_attendees' => 'nullable|integer|min:0',
-            'address' => 'nullable|string|max:255',
-            'latitude' => 'nullable|numeric',
-            'longitude' => 'nullable|numeric',
-            'website' => 'nullable|url|max:255',
-            'date' => 'nullable|date',
-            'day' => 'nullable|string|max:20',
-            'start_time' => 'nullable|date_format:H:i',
-            'end_time' => 'nullable|date_format:H:i',
-            'status' => 'nullable|in:active,draft,expired',
+            'author' => 'nullable|string|max:255',
+            'imageUrl' => 'nullable|url',
+            'featured' => 'nullable|boolean',
+            'category_id' => 'required|exists:categories,id',
+            'articleUrl' => 'nullable|url|max:255',
+            'publishedAt' => 'nullable|date',
+            'status' => 'required|in:active,draft,expired,inactive',
         ];
     }
 
-     public function withValidator(Validator $validator)
+    public function messages(): array
     {
-        // $validator->after(function ($validator) {
-
-        //     if (!$this->filled('image')) {
-        //         return;
-        //     }
-        //     $error = ImageHelper::validateImageDimensions($this->image,5306,3770);
-        //     if ($error) {
-        //         $validator->errors()->add('image', $error);
-        //     }
-        // });
+        return [
+            'category_id.exists' => 'The selected category is invalid or not of type news.',
+        ];
     }
 
     protected function failedValidation(Validator $validator)

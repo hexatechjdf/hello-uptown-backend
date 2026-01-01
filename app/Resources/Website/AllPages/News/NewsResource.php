@@ -3,24 +3,26 @@
 namespace App\Resources\Website\AllPages\News;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Str;
 use Carbon\Carbon;
 
 class NewsResource extends JsonResource
 {
     public function toArray($request)
     {
+        $daysAgo = $this->published_at ? Carbon::parse($this->published_at)->diffInDays(Carbon::now()) : null;
         return [
             'id' => (string) $this->id,
-            'slug' => Str::slug($this->heading),
-            'title' => $this->heading,
-            'excerpt' => $this->subheading,
+            'slug' => $this->slug,
+            'title' => $this->title,
+            'excerpt' => $this->description, 150,
             'content' => $this->description,
             'image' => $this->image ?? null,
             'author' => $this->author ?? 'Admin',
-            'daysAgo' => $this->date ? Carbon::parse($this->date)->diffInDays(Carbon::now()): null,
-            'publishedAt' => $this->date?->format('Y-m-d'),
-            'externalUrl' => $this->website,
+            'daysAgo' => $daysAgo,
+            'publishedAt' => $this->published_at ? Carbon::parse($this->published_at)->format('Y-m-d') : null,
+            'externalUrl' => $this->article_url,
+            'isFeatured' => (bool) $this->featured,
+            'category' => $this->category ? $this->category->name : null,
         ];
     }
 }

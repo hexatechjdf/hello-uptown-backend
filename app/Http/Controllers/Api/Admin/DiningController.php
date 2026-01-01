@@ -23,7 +23,7 @@ class DiningController extends Controller
     {
         $dinings = $this->service->getAll(
             $request->only(['search', 'status']),
-            $request->get('sort', 'date'),
+            $request->get('sort', 'created_at'),
             $request->get('order', 'desc'),
             $request->get('perPage', 10)
         );

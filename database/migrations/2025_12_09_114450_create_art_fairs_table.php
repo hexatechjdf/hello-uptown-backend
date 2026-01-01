@@ -17,7 +17,11 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('image')->nullable();
 
-            $table->integer('available_artist')->nullable();
+            $table->string('slug')->unique()->nullable();
+            $table->boolean('featured')->default(false);
+            $table->string('direction_link')->nullable();
+            $table->integer('available_artist')->default(0);
+            $table->integer('artist_count')->default(0);
 
             $table->json('art_categories')->nullable();
             $table->json('event_features')->nullable();

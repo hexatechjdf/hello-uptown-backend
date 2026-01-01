@@ -6,47 +6,51 @@ use App\Models\Dining;
 
 class DiningRepository
 {
-    protected $model;
-
-    public function __construct(Dining $model)
+    public function all(array $filters = [], string $sort = 'created_at', string $order = 'desc', int $perPage = 10)
     {
-        $this->model = $model;
-    }
-
-    public function all($filters = [], $sort = 'date', $order = 'desc', $perPage = 10)
-    {
-        $query = $this->model->query();
+        $query = Dining::with('category');
 
         if (!empty($filters['search'])) {
-            $query->where('heading', 'like', "%{$filters['search']}%")
-                  ->orWhere('description', 'like', "%{$filters['search']}%");
+            $query->where(function ($q) use ($filters) {
+                $q->where('title', 'like', "%{$filters['search']}%")
+                  ->orWhere('description', 'like', "%{$filters['search']}%")
+                  ->orWhere('location', 'like', "%{$filters['search']}%");
+            });
         }
 
         if (!empty($filters['status'])) {
             $query->where('status', $filters['status']);
         }
 
-        return $query->orderBy($sort, $order)->paginate($perPage);
+        if (!empty($filters['category_id'])) {
+            $query->where('category_id', $filters['category_id']);
+        }
+
+        if (!empty($filters['price_range'])) {
+            $query->where('price_range', $filters['price_range']);
+        }
+
+        if (!empty($filters['featured'])) {
+            $query->where('is_featured', filter_var($filters['featured'], FILTER_VALIDATE_BOOLEAN));
+        }
+
+        return $query
+            ->orderBy($sort, $order)
+            ->paginate($perPage);
     }
 
-    public function find($id)
+    public function create(array $data): Dining
     {
-        return $this->model->findOrFail($id);
+        return Dining::create($data);
     }
 
-    public function create(array $data)
+    public function find($id): Dining
     {
-        return $this->model->create($data);
+        return Dining::with('category')->findOrFail($id);
     }
-
-    public function update(Dining $dining, array $data)
+    public function update($dining, array $data): Dining
     {
         $dining->update($data);
-        return $dining->fresh();
-    }
-
-    public function delete(Dining $dining)
-    {
-        return $dining->delete();
+        return $dining;
     }
 }

@@ -29,8 +29,14 @@ class HomeController extends Controller
     }
     public function topDealsOfMonth()
     {
-        $deals = Deal::where('status', true)->whereMonth('created_at', now()->month)->take(5)->get();
-        return ApiResponse::collection(DealDealResource::collection($deals),'Top deals of the month fetched successfully');
+            $deals = Deal::withoutGlobalScope(\App\Scopes\BusinessScope::class)
+                ->where('status', true)
+                ->whereMonth('created_at', now()->month)
+                ->take(5)
+                ->get();
+
+            return ApiResponse::collection(DealDealResource::collection($deals),
+                'Top deals of the month fetched successfully');
     }
     public function browseCategories()
     {

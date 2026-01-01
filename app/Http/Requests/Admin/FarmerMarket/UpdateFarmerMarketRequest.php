@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Admin\FarmerMarket;
 
-use App\Helpers\ImageHelper;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -14,37 +13,25 @@ class UpdateFarmerMarketRequest extends FormRequest
     public function rules()
     {
         return [
+            'category_id' => 'required|exists:categories,id',
             'heading' => 'required|string|max:255',
-            'subheading' => 'nullable|string|max:255',
             'description' => 'nullable|string',
-            'image'             => 'nullable|url',
-            'available_vendors' => 'nullable|integer',
-            'tags' => 'nullable|array',
-            'sub_tags' => 'nullable|array',
-            'address' => 'nullable|string',
+            'image' => 'nullable|url',
+            'available_vendors' => 'nullable|integer|min:0',
+            'specialization' => 'nullable|string|max:255',
+            'features' => 'nullable|array',
+            'price' => 'nullable|numeric|min:0',
+            'address' => 'nullable|string|max:255',
+            'direction_link' => 'nullable|url',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
             'website' => 'nullable|url',
-            'map_meta' => 'nullable|array',
-            'date' => 'required|date',
-            'day' => 'nullable|string',
-            'start_time' => 'nullable',
-            'end_time' => 'nullable',
+            'ticket_link' => 'nullable|url',
+            'schedule' => 'nullable|array',
+            'next_market_date' => 'nullable|date',
             'featured' => 'boolean',
             'status' => 'required|in:draft,scheduled,active,expired',
         ];
-    }
-    public function withValidator(Validator $validator)
-    {
-        // $validator->after(function ($validator) {
-        //     if (!$this->filled('image')) {
-        //         return;
-        //     }
-        //     $error = ImageHelper::validateImageDimensions($this->image,5306,3770);
-        //     if ($error) {
-        //         $validator->errors()->add('image', $error);
-        //     }
-        // });
     }
     protected function failedValidation(Validator $validator)
     {
@@ -54,7 +41,4 @@ class UpdateFarmerMarketRequest extends FormRequest
             'errors' => $validator->errors()
         ], 422));
     }
-
 }
-
-?>

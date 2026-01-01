@@ -22,10 +22,10 @@ class NightlifeController extends Controller
     public function index(Request $request)
     {
         $nightlifes = $this->service->all(
-            $request->only(['search','status']),
-            $request->get('sort','date'),
-            $request->get('order','desc'),
-            $request->get('perPage',10)
+            $request->only(['search', 'status', 'category_id', 'featured']),
+            $request->get('sort', 'created_at'),
+            $request->get('order', 'desc'),
+            $request->get('perPage', 10)
         );
 
         return ApiResponse::collection(NightlifeResource::collection($nightlifes), 'Nightlife list retrieved');
@@ -33,20 +33,20 @@ class NightlifeController extends Controller
 
     public function store(NightlifeRequest $request)
     {
-        $nightlife = $this->service->create($request->all());
+        $nightlife = $this->service->create($request->validated());
         return ApiResponse::resource(new NightlifeResource($nightlife), 'Nightlife created successfully');
     }
 
     public function show($id)
     {
         $nightlife = $this->service->find($id);
-        return ApiResponse::resource(new NightlifeResource($nightlife));
+        return ApiResponse::resource(new NightlifeResource($nightlife), 'Nightlife details retrieved');
     }
 
     public function update(NightlifeRequest $request, $id)
     {
         $nightlife = $this->service->find($id);
-        $nightlife = $this->service->update($nightlife, $request->all());
+        $nightlife = $this->service->update($nightlife, $request->validated());
         return ApiResponse::resource(new NightlifeResource($nightlife), 'Nightlife updated successfully');
     }
 

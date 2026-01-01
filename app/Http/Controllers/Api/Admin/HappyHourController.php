@@ -22,10 +22,10 @@ class HappyHourController extends Controller
     public function index(Request $request)
     {
         $items = $this->service->all(
-            $request->only(['search','status']),
-            $request->get('sort','date'),
-            $request->get('order','desc'),
-            $request->get('perPage',10)
+            $request->only(['search', 'status', 'category_id', 'featured']),
+            $request->get('sort', 'created_at'), // Changed from 'date' to 'created_at'
+            $request->get('order', 'desc'),
+            $request->get('perPage', 10)
         );
 
         return ApiResponse::collection(HappyHourResource::collection($items), 'Happy Hours list retrieved');
@@ -33,20 +33,20 @@ class HappyHourController extends Controller
 
     public function store(HappyHourRequest $request)
     {
-        $item = $this->service->create($request->all());
+        $item = $this->service->create($request->validated()); // Changed from all() to validated()
         return ApiResponse::resource(new HappyHourResource($item), 'Happy Hours created successfully');
     }
 
     public function show($id)
     {
         $item = $this->service->find($id);
-        return ApiResponse::resource(new HappyHourResource($item));
+        return ApiResponse::resource(new HappyHourResource($item), 'Happy Hours details retrieved');
     }
 
     public function update(HappyHourRequest $request, $id)
     {
         $item = $this->service->find($id);
-        $item = $this->service->update($item, $request->all());
+        $item = $this->service->update($item, $request->validated()); // Changed from all() to validated()
         return ApiResponse::resource(new HappyHourResource($item), 'Happy Hours updated successfully');
     }
 

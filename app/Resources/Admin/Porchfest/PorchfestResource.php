@@ -9,24 +9,24 @@ class PorchfestResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'heading' => $this->heading,
-            'subheadingPrimary' => $this->subheading_primary,
-            'subheadingSecondary' => $this->subheading_secondary,
+            'title' => $this->title,
+            'artist' => $this->artist,
             'description' => $this->description,
-            'imageUrl' => $this->image ? asset('storage/'.$this->image) : null,
+            'image' => $this->image,
+            'slug' => $this->slug,
+            'isFeatured' => (bool) $this->is_featured,
+            'directionLink' => $this->direction_link,
+            'attendees' => $this->attendees,
             'availableSeats' => $this->available_seats,
-            'categories' => $this->categories,
-            'features' => $this->features,
-            'address' => $this->address,
+            'genre' => $this->genre ?? [],
+            'eventFeatures' => $this->event_features ?? [],
+            'time' => $this->time ?? null,
+            'location' => $this->location,
             'lat' => $this->latitude,
             'lng' => $this->longitude,
-            'eventDate' => $this->event_date?->format('d/m/Y'),
-            'day' => $this->day,
-            'startTime' => $this->start_time,
-            'endTime' => $this->end_time,
             'status' => $this->status,
+            'createdAt' => $this->created_at->format('Y-m-d H:i:s'),
+            'updatedAt' => $this->updated_at->format('Y-m-d H:i:s'),
         ];
     }
 }
-
-?>

@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Helpers\ApiResponse;
 use App\Models\Deal;
-use App\Repositories\Deal\DealRepository;
+use App\Repositories\Website\DealRepository; // Changed this
 use App\Resources\Deal\DealResource;
 use App\Resources\Deal\DealOfWeekResource;
 use App\Services\Deal\DealService;
@@ -16,7 +16,7 @@ class DealController extends Controller
     protected $service;
     protected $repo;
 
-    public function __construct(DealService $service, DealRepository $repo)
+    public function __construct(DealService $service, DealRepository $repo) // Type-hint with Website\DealRepository
     {
         $this->service = $service;
         $this->repo = $repo;
@@ -38,9 +38,10 @@ class DealController extends Controller
 
         $sort = 'created_at';
         $order = 'desc';
-        $perPage = 0;// $request->input('perPage', 0);
+        $perPage = $request->input('perPage', 0);
 
         $deals = $this->repo->all($filters, $sort, $order, $perPage);
+
         // Additional 2 card info
         $popularDeals = $this->repo->getPopularDeals(5)->count();
         $expiringSoonDeals = $this->repo->getExpiringSoonDeals(5)->count();
@@ -59,12 +60,21 @@ class DealController extends Controller
      */
     public function show($id)
     {
-        $deal = Deal::where('id', $id)->where('status', true)->first();
+        $deal = $this->repo->findActive($id); // Use repository method
+
         if (!$deal) {
             return ApiResponse::error('Deal not found', 404);
         }
-        return ApiResponse::collection(DealResource::collection(collect([$deal])), 'Deal fetched successfully');
+
+        return ApiResponse::success(
+            new DealResource($deal),
+            'Deal fetched successfully'
+        );
     }
+
+    /**
+     * Deal of the week
+     */
     public function dealOfTheWeek()
     {
         $mainDeal = $this->repo->getDealOfTheWeek();
@@ -72,10 +82,25 @@ class DealController extends Controller
         if (!$mainDeal) {
             return ApiResponse::error('No deal of the week found', 404);
         }
+
         $otherDeals = $this->repo->getOtherGreatDeals($mainDeal->id, 4);
 
-        return ApiResponse::success(new DealOfWeekResource($mainDeal), 'Deal of the week retrieved successfully');
+        return ApiResponse::success(
+            new DealOfWeekResource($mainDeal),
+            'Deal of the week retrieved successfully'
+        );
+    }
 
-        // return ApiResponse::success(['dealOfTheWeek' => new DealOfWeekResource($mainDeal),'otherGreatDeals' => DealOfWeekResource::collection($otherDeals),], 'Deal of the week retrieved successfully');
+    /**
+     * Top deals of the month
+     */
+    public function topDealsOfMonth()
+    {
+        $deals = $this->repo->topDealsOfMonth(5);
+
+        return ApiResponse::success(
+            DealResource::collection($deals),
+            'Top deals of the month fetched successfully'
+        );
     }
 }
