@@ -7,14 +7,15 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class MusicConcertRepository
 {
-    public function paginate(array $filters = []): LengthAwarePaginator
+    public function all($filters = [], $sort = 'event_date', $order = 'desc', $perPage = 10): LengthAwarePaginator
     {
         $query = MusicConcert::with('category');
 
         if (!empty($filters['search'])) {
             $query->where(function ($q) use ($filters) {
                 $q->where('main_heading', 'like', "%{$filters['search']}%")
-                  ->orWhere('artist', 'like', "%{$filters['search']}%");
+                  ->orWhere('artist', 'like', "%{$filters['search']}%")
+                  ->orWhere('event_description', 'like', "%{$filters['search']}%");
             });
         }
 
@@ -27,15 +28,11 @@ class MusicConcertRepository
         }
 
         if (isset($filters['featured'])) {
-            $query->where('featured', $filters['featured']);
+            $query->where('featured', filter_var($filters['featured'], FILTER_VALIDATE_BOOLEAN));
         }
 
-        $query->orderBy(
-            $filters['sortBy'] ?? 'event_date',
-            $filters['order'] ?? 'desc'
-        );
-
-        return $query->paginate($filters['perPage'] ?? 10);
+        // Use the parameters passed from controller instead of filters array
+        return $query->orderBy($sort, $order)->paginate($perPage);
     }
 
     public function find(int $id): ?MusicConcert

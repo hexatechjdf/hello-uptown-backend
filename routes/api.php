@@ -29,6 +29,7 @@ use App\Http\Controllers\Api\Frontend\ContactMessageController;
 use App\Http\Controllers\Api\Frontend\AllPages\AllPagesController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\Frontend\HomeController;
+use App\Http\Controllers\Api\Frontend\RedemptionController as FrontendRedemptionController;
 use App\Http\Controllers\Api\Frontend\SubscribrNewsLetterController;
 use App\Http\Controllers\Api\Redemption\RedemptionController;
 use Illuminate\Support\Facades\Route;
@@ -80,6 +81,7 @@ Route::post('/contact-message', [ContactMessageController::class, 'store']);
 Route::post('/newsletter-subscribe', [SubscribrNewsLetterController::class, 'subscribe']);
 Route::get('/unsubscribe/{email}', [SubscribrNewsLetterController::class, 'unsubscribe'])->name('unsubscribe');
 
+Route::post('/redemption', [FrontendRedemptionController::class, 'redemption']);
 // Route::post('/contact-us', [ContactMessageController::class, 'submit']);
 
 

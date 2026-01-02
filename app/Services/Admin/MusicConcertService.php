@@ -12,10 +12,16 @@ class MusicConcertService
         protected MusicConcertRepository $repo
     ) {}
 
-    public function paginate(array $filters = []): LengthAwarePaginator
+    public function all($filters = [], $sort = 'event_date', $order = 'desc', $perPage = 10): LengthAwarePaginator
     {
-        return $this->repo->paginate($filters);
+        return $this->repo->all($filters, $sort, $order, $perPage);
     }
+
+    public function find($id): ?MusicConcert
+    {
+        return $this->repo->find($id);
+    }
+
     public function store(array $data): MusicConcert
     {
         return $this->repo->create($data);
@@ -25,6 +31,7 @@ class MusicConcertService
     {
         return $this->repo->update($concert, $data);
     }
+
     public function delete(MusicConcert $concert): bool
     {
         return $this->repo->delete($concert);
