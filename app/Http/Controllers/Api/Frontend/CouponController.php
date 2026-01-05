@@ -23,10 +23,10 @@ class CouponController extends Controller
     public function index(Request $request)
     {
         $filters = [
-            'search' => $request->input('search'),
-            'category' => $request->input('category'),
-            'discount_type' => $request->input('discount_type'),
-            'filter' => $request->input('filter'), // newest, expiringSoon, mostPopular
+            'search' => $request->search,
+            'category' => $request->category_id,
+            'discount_type' => $request->discount_type,
+            'filter' => $request->filter, // newest, expiringSoon, mostPopular
         ];
 
         $sort = $request->input('sort', 'created_at');

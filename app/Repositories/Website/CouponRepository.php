@@ -27,7 +27,7 @@ class CouponRepository
         }
 
         if (!empty($filters['category'])) {
-            $query->where('category', $filters['category']);
+            $query->where('category_id', $filters['category']);
         }
 
         if (!empty($filters['discount_type'])) {
