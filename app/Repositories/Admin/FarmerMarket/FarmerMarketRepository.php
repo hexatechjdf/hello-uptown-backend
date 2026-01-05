@@ -12,8 +12,7 @@ class FarmerMarketRepository
             ->when($filters['status'] ?? null, fn ($q, $s) => $q->where('status', $s))
             ->when($filters['featured'] ?? null, fn ($q, $f) => $q->where('featured', $f))
             ->when($filters['search'] ?? null, function ($q, $s) {
-                $q->where('heading', 'like', "%{$s}%")
-                  ->orWhere('subheading', 'like', "%{$s}%");
+                $q->where('heading', 'like', "%{$s}%");
             })
             ->orderBy($filters['sort_by'] ?? 'next_market_date', $filters['sort_dir'] ?? 'desc')
             ->paginate($filters['per_page'] ?? 10);

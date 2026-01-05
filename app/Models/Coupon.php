@@ -34,6 +34,10 @@ class Coupon extends Model
     {
         static::addGlobalScope(new BusinessScope);
     }
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
 
     public function business()
     {
