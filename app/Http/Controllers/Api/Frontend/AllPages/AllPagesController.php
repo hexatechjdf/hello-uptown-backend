@@ -25,7 +25,7 @@ use App\Resources\Website\AllPages\News\NewsResource;
 use App\Resources\Website\AllPages\NightLife\NightlifeResource;
 use App\Resources\Website\AllPages\Porchfest\PorchfestResource;
 use App\Resources\Website\AllPages\Advertisement\AdvertisementResource;
-
+use Carbon\Carbon;
 class AllPagesController extends Controller
 {
     public function musicConcerts(Request $request) {
@@ -161,8 +161,11 @@ class AllPagesController extends Controller
         );
     }
 
-    public function advertisements(Request $request) {
-        $allAdvertisements = Advertisement::get();
-        return ApiResponse::collection(AdvertisementResource::collection($allAdvertisements), 'Advertisement retrieved');
+    public function advertisements(Request $request)
+    {
+        $today = Carbon::today(); // Get current date
+        $allAdvertisements = Advertisement::where('status', 1)->whereDate('start_date', '<=', $today)->whereDate('end_date', '>=', $today)->get();
+        return ApiResponse::collection(AdvertisementResource::collection($allAdvertisements),'Advertisements retrieved');
+        
     }
 }

@@ -10,7 +10,7 @@ use App\Models\Business;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Resources\User\UserResource;
-
+use Illuminate\Support\Facades\DB;
 use App\Resources\Admin\User\UserResource as AdminUserResource;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -37,83 +37,87 @@ class BusinessController extends Controller
         );
     }
 
-   public function store(Request $request)
+    public function store(Request $request)
     {
-        $userId = $request->user_id;
-        if (Business::where('user_id', $userId)->exists()) {
-            return ApiResponse::error('Business already exists against this user');
-        }
-        $data = $request->validate([
-            'user_id'       => 'required|exists:users,id',
-            'business_name' => 'required|string|max:255',
+        return DB::transaction(function () use ($request) {
+            $userValidated = $request->validate([
+                'first_name' => ['required', 'string', 'max:255'],
+                'last_name'  => ['required', 'string', 'max:255'],
+                'email'      => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+                'profile'    => ['nullable', 'string', 'max:500'],
+                'password'   => ['nullable', 'string', 'min:8', 'confirmed'],
+            ]);
 
-            // Descriptions
-            'short_description' => 'nullable|string',
-            'long_description'  => 'nullable|string',
-            'description'       => 'nullable|string',
+            $user = new User();
+            $user->first_name = $userValidated['first_name'];
+            $user->last_name  = $userValidated['last_name'];
+            $user->email      = $userValidated['email'];
+            $user->profile    = $userValidated['profile'] ?? null;
+            $user->name       = $userValidated['first_name'] . ' ' . $userValidated['last_name'];
 
-            // Category & Tags
-            'category_id' => 'nullable|exists:categories,id',
-            'tags'        => 'nullable|array',
-            'tags.*'      => 'string',
+            $user->password = !empty($userValidated['password'])
+                ? Hash::make($userValidated['password'])
+                : Hash::make(Str::random(12));
 
-            // Branding
-            'logo'        => 'nullable|string',
-            'cover_image' => 'nullable|string',
+            $user->save();
 
-            // Contact & Location
-            'address'           => 'nullable|string',
-            'latitude'          => 'nullable|numeric',
-            'longitude'         => 'nullable|numeric',
-            'redemption_radius' => 'nullable|integer',
-            'phone'             => 'nullable|string|max:50',
-            'email'             => 'nullable|email',
-            'website'           => 'nullable|url',
-            'opening_hours'     => 'nullable|string',
+            $businessValidated = $request->validate([
+                'business_name' => 'required|string|max:255',
 
-            // Social Links
-            'facebook_link'  => 'nullable|url',
-            'instagram_link' => 'nullable|url',
-            'twitter_link'   => 'nullable|url',
+                'short_description' => 'nullable|string',
+                'long_description'  => 'nullable|string',
+                'description'       => 'nullable|string',
 
-            // Slider Settings
-            'slider_tagline'           => 'nullable|string',
-            'slider_section_text'      => 'nullable|string',
-            'slider_heading_one'       => 'nullable|string',
-            'slider_subheading'        => 'nullable|string',
-            'slider_short_description' => 'nullable|string',
-            'slider_image'             => 'nullable|string',
-            'image_overlay_heading'    => 'nullable|string',
-            'image_overlay_heading2'   => 'nullable|string',
-
-            'slider_text1'       => 'nullable|string',
-            'slider_text1_value' => 'nullable|string',
-            'slider_text2'       => 'nullable|string',
-            'slider_text2_value' => 'nullable|string',
-            'slider_text3'       => 'nullable|string',
-            'slider_text3_value' => 'nullable|string',
-
-            'send_new_deals' => 'nullable|boolean',
-            'status'         => 'nullable|boolean',
-        ]);
-
-        $slug = Str::slug($data['business_name']);
-        if (Business::where('slug', $slug)->exists()) {
-            return ApiResponse::error(
-                'Business with this name already exists',
-                422
+                'category_id' => 'nullable|exists:categories,id',
+                'tags'        => 'nullable|array',
+                'tags.*'      => 'string',
+                'logo'        => 'nullable|string',
+                'cover_image' => 'nullable|string',
+                'address'           => 'nullable|string',
+                'latitude'          => 'nullable|numeric',
+                'longitude'         => 'nullable|numeric',
+                'redemption_radius' => 'nullable|integer',
+                'phone'             => 'nullable|string|max:50',
+                'email'             => 'nullable|email',
+                'website'           => 'nullable|url',
+                'opening_hours'     => 'nullable|string',
+                'facebook_link'  => 'nullable|url',
+                'instagram_link' => 'nullable|url',
+                'twitter_link'   => 'nullable|url',
+                'slider_tagline'           => 'nullable|string',
+                'slider_section_text'      => 'nullable|string',
+                'slider_heading_one'       => 'nullable|string',
+                'slider_subheading'        => 'nullable|string',
+                'slider_short_description' => 'nullable|string',
+                'slider_image'             => 'nullable|string',
+                'image_overlay_heading'    => 'nullable|string',
+                'image_overlay_heading2'   => 'nullable|string',
+                'slider_text1'       => 'nullable|string',
+                'slider_text1_value' => 'nullable|string',
+                'slider_text2'       => 'nullable|string',
+                'slider_text2_value' => 'nullable|string',
+                'slider_text3'       => 'nullable|string',
+                'slider_text3_value' => 'nullable|string',
+                'send_new_deals' => 'nullable|boolean',
+                'status'         => 'nullable|boolean',
+            ]);
+            $slug = Str::slug($businessValidated['business_name']);
+            if (Business::where('slug', $slug)->exists()) {
+                abort(422, 'Business with this name already exists');
+            }
+            $businessValidated['slug'] = $slug;
+            $businessValidated['user_id'] = $user->id;
+            $business = $this->service->create($businessValidated);
+            $user->business_id = $business->id;
+            $user->save();
+            return ApiResponse::success(
+                [
+                    'business' => new BusinessResource($business),
+                ],
+                'User and Business created successfully',
+                201
             );
-        }
-        $data['slug'] = $slug;
-
-        $business = $this->service->create($data);
-
-        return ApiResponse::resource(
-            new BusinessResource($business),
-            'Business created successfully',
-            [],
-            201
-        );
+        });
     }
 
     public function show(Business $business)
@@ -199,7 +203,7 @@ class BusinessController extends Controller
             'Business updated successfully'
         );
     }
-    
+
     public function users(Request $request)
     {
         $users = User::get();
@@ -306,4 +310,23 @@ class BusinessController extends Controller
             return ApiResponse::resource(new UserResource($user), 'Password updated successfully');
         }
 
+        public function featured(Request $request)
+        {
+            $data = $request->validate([
+                'business_id' => 'required|exists:businesses,id',
+                'is_featured' => 'required|boolean',
+            ]);
+
+            $business = Business::find($data['business_id']);
+
+            $business->is_featured = $data['is_featured'];
+            $business->save();
+
+            return ApiResponse::resource(
+                new BusinessResource($business),
+                $data['is_featured']
+                    ? 'Business marked as featured successfully'
+                    : 'Business removed from featured successfully'
+            );
+        }
 }

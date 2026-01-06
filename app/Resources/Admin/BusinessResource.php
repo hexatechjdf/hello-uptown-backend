@@ -35,6 +35,8 @@ class BusinessResource extends JsonResource
             ],
             'member_since'         => $this->created_at,
             'is_active'            => $this->status,
+            'is_featured'            => $this->is_featured,
+            'created_at'            => $this->created_at,
             'slider_settings' => $this->sliderSettings,
             'notification_settings' => $this->notificationSettings,
             'cover_url' => $this->coverUrl,

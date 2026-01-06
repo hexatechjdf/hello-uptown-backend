@@ -41,6 +41,7 @@ class Business extends Model
         'image_overlay_heading2',
         'send_new_deals',
         'status',
+        'is_featured',
         'slider_text1',
         'slider_text1_value',
         'slider_text2',

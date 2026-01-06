@@ -82,6 +82,7 @@ Route::post('/newsletter-subscribe', [SubscribrNewsLetterController::class, 'sub
 Route::get('/unsubscribe/{email}', [SubscribrNewsLetterController::class, 'unsubscribe'])->name('unsubscribe');
 
 Route::post('/redemption', [FrontendRedemptionController::class, 'redemption']);
+Route::post('/customer', [FrontendRedemptionController::class, 'validateOrCreateCustomer']);
 // Route::post('/contact-us', [ContactMessageController::class, 'submit']);
 
 
@@ -148,6 +149,7 @@ Route::prefix('admin')
 
         Route::get('/dashboard', [AdminDashboardController::class, 'index']);
         Route::apiResource('businesses', BusinessController::class);
+        Route::post('/featured', [BusinessController::class, 'featured']);
         Route::apiResource('music-concerts', MusicConcertController::class);
         Route::apiResource('farmer-markets', FarmerMarketController::class);
         Route::apiResource('art-fairs', ArtFairController::class);

@@ -21,9 +21,7 @@ class RedemptionController extends Controller
     public function index(ListRedemptionRequest $request)
     {
         $businessId = request()->query('business_id');
-        $businessId = $businessId !== null && $businessId != 0
-        ? (int) $businessId
-        : auth()->user()->business->id;
+        $businessId = $businessId !== null && $businessId != 0 ? (int) $businessId : auth()->user()->business->id;
         $result = $this->service->list($request->validated(), $businessId);
         return ApiResponse::collection(RedemptionResource::collection($result),'Redemption list retrieved successfully');
     }

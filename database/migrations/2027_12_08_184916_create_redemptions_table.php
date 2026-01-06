@@ -6,29 +6,24 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('redemptions', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('customer_id');
-            $table->unsignedBigInteger('coupon_id');
             $table->unsignedBigInteger('business_id');
-            $table->timestamp('redeemed_at');
-            $table->float('discount_amount');
+            $table->enum('type', ['deal', 'coupon']);
+            $table->unsignedBigInteger('parent_id');
+            $table->timestamp('redeemed_at')->nullable();
+            $table->float('discount_amount')->default(0);
             $table->string('status')->default('pending');
             $table->timestamps();
             $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
-            $table->foreign('coupon_id')->references('id')->on('coupons')->onDelete('cascade');
             $table->foreign('business_id')->references('id')->on('businesses')->onDelete('cascade');
+            $table->index(['type', 'parent_id']);
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('redemptions');
