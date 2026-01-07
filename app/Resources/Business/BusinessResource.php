@@ -15,7 +15,7 @@ class BusinessResource extends JsonResource
             'shortDescription'    => $this->short_description,
             'longDescription'     => $this->long_description,
             'description'         => $this->description ?? $this->short_description,
-            'category'            => $this->category ?? null,
+            'category'            => $this->categorydata ?? null,
             'tags'                => $this->tags ?? [],
             'logo'                => $this->logo,
             'coverImage'          => $this->cover_image,

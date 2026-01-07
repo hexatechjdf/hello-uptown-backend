@@ -24,7 +24,7 @@ class BusinessRepository
     }
     public function all($filters = [], $sort = 'created_at', $order = 'desc', $perPage = 10)
     {
-        $query = $this->model->query();
+        $query = $this->model->query()->with(['categorydata', 'category']);
         if (!empty($filters['search'])) {
             $query->where('business_name', 'like', "%{$filters['search']}%")
                 ->orWhere('short_description', 'like', "%{$filters['search']}%");

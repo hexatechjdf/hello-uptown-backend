@@ -121,6 +121,124 @@ class CouponService
         ];
     }
 
+    // public function redeemCoupon(array $data)
+    // {
+    //     if ($data['type'] === 'coupon') {
+    //         $model = Coupon::with('business')->withoutGlobalScope(BusinessScope::class)->find($data['parent_id']);
+    //         $type = 'coupon';
+    //         $itemName = 'coupon';
+    //     } else {
+    //         $model = Deal::with('business')->withoutGlobalScope(BusinessScope::class)->find($data['parent_id']);
+    //         $type = 'deal';
+    //         $itemName = 'deal';
+    //     }
+
+    //     if (!$model) {
+    //         return [
+    //             'message' => ucfirst($itemName) . ' not found'
+    //         ];
+    //     }
+    //     if (!$model->business) {
+    //         return [
+    //             'message' => ucfirst($itemName) . ' business not found'
+    //         ];
+    //     }
+
+    //     if (!$model->is_active) {
+    //         return [
+    //             'message' => ucfirst($itemName) . ' is not active'
+    //         ];
+    //     }
+    //     $business = $model->business;
+    //     $today = Carbon::today();
+    //     // Check validity dates
+    //     if ($today->lt(Carbon::parse($model->valid_from))) {
+    //         return [
+    //             'message' => ucfirst($itemName) . ' is not yet valid',
+    //             'valid_from' => $model->valid_from,
+    //             'current_date' => $today->toDateString()
+    //         ];
+    //     }
+
+    //     if ($today->gt(Carbon::parse($model->valid_until))) {
+    //         return [
+    //             'message' => ucfirst($itemName) . ' has expired',
+    //             'valid_until' => $model->valid_until,
+    //             'current_date' => $today->toDateString()
+    //         ];
+    //     }
+    //     // Verify customer exists
+    //     $customer = Customer::find($data['customer_id']);
+    //     if (!$customer) {
+    //         return [
+    //             'message' => 'Customer not found'
+    //         ];
+    //     }
+
+    //     // Calculate distance
+    //     $distanceInMeters = $this->calculateDistance(
+    //         $data['latitude'],
+    //         $data['longitude'],
+    //         $business->latitude,
+    //         $business->longitude
+    //     );
+
+    //     if ($distanceInMeters > $business->redemption_radius) {
+    //         return [
+    //             'message' => 'You are outside the redemption range',
+    //             'distance_in_meters' => round($distanceInMeters, 2),
+    //             'allowed_radius' => $business->redemption_radius
+    //         ];
+    //     }
+
+    //     // Check usage limit
+    //     $usedCount = Redemption::where('customer_id', $customer->id)
+    //         ->where('type', $type)
+    //         ->where('parent_id', $model->id)
+    //         ->count();
+
+    //     if ($model->usage_limit_per_user > 0 && $usedCount >= $model->usage_limit_per_user) {
+    //         return [
+    //             'message' => 'You have reached the maximum redemption limit for this ' . $itemName,
+    //             'used_count' => $usedCount,
+    //             'usage_limit' => $model->usage_limit_per_user
+    //         ];
+    //     }
+
+    //     // Calculate discount amount
+    //     $discountAmount = 0;
+    //     if ($type === 'coupon') {
+    //         if ($model->discount_type === 'percentage') {
+    //             $discountAmount = ($model->discount_value / 100) * $model->minimum_spend;
+    //         } else {
+    //             $discountAmount = $model->discount_value;
+    //         }
+    //     } else {
+    //         // Handle deal discount calculation if different
+    //         $discountAmount = $model->discount_amount ?? 0;
+    //     }
+
+    //     // Create redemption record
+    //     $redemption = Redemption::create([
+    //         'customer_id' => $customer->id,
+    //         'business_id' => $business->id,
+    //         'type'        => $type,
+    //         'parent_id'   => $model->id,
+    //         'redeemed_at' => Carbon::now(),
+    //         'discount_amount' => $discountAmount,
+    //         'status' => 'pending'
+    //     ]);
+
+    //     return [
+    //         'success' => true,
+    //         'redemption_id' => $redemption->id,
+    //         'coupon' => $model,
+    //         'distance_in_meters' => round($distanceInMeters, 2),
+    //         'discount_amount' => $discountAmount,
+    //         'message' => ucfirst($itemName) . ' redeemed successfully'
+    //     ];
+    // }
+
     public function redeemCoupon(array $data)
     {
         if ($data['type'] === 'coupon') {
@@ -135,25 +253,32 @@ class CouponService
 
         if (!$model) {
             return [
+                'error' => true, // Added this key
                 'message' => ucfirst($itemName) . ' not found'
             ];
         }
+
         if (!$model->business) {
             return [
+                'error' => true, // Added this key
                 'message' => ucfirst($itemName) . ' business not found'
             ];
         }
 
         if (!$model->is_active) {
             return [
+                'error' => true, // Added this key
                 'message' => ucfirst($itemName) . ' is not active'
             ];
         }
+
         $business = $model->business;
         $today = Carbon::today();
+
         // Check validity dates
         if ($today->lt(Carbon::parse($model->valid_from))) {
             return [
+                'error' => true, // Added this key
                 'message' => ucfirst($itemName) . ' is not yet valid',
                 'valid_from' => $model->valid_from,
                 'current_date' => $today->toDateString()
@@ -162,15 +287,18 @@ class CouponService
 
         if ($today->gt(Carbon::parse($model->valid_until))) {
             return [
+                'error' => true, // Added this key
                 'message' => ucfirst($itemName) . ' has expired',
                 'valid_until' => $model->valid_until,
                 'current_date' => $today->toDateString()
             ];
         }
+
         // Verify customer exists
         $customer = Customer::find($data['customer_id']);
         if (!$customer) {
             return [
+                'error' => true, // Added this key
                 'message' => 'Customer not found'
             ];
         }
@@ -185,6 +313,7 @@ class CouponService
 
         if ($distanceInMeters > $business->redemption_radius) {
             return [
+                'error' => true, // Added this key
                 'message' => 'You are outside the redemption range',
                 'distance_in_meters' => round($distanceInMeters, 2),
                 'allowed_radius' => $business->redemption_radius
@@ -199,6 +328,7 @@ class CouponService
 
         if ($model->usage_limit_per_user > 0 && $usedCount >= $model->usage_limit_per_user) {
             return [
+                'error' => true, // Added this key
                 'message' => 'You have reached the maximum redemption limit for this ' . $itemName,
                 'used_count' => $usedCount,
                 'usage_limit' => $model->usage_limit_per_user
@@ -217,7 +347,7 @@ class CouponService
             // Handle deal discount calculation if different
             $discountAmount = $model->discount_amount ?? 0;
         }
-        
+
         // Create redemption record
         $redemption = Redemption::create([
             'customer_id' => $customer->id,

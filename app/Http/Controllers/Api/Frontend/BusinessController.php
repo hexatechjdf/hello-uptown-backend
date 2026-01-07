@@ -54,14 +54,14 @@ class BusinessController extends Controller
      */
     public function show($id)
     {
-          $Business = Business::where('id', $id)->where('status', true)->first();
-        if (!$Business) {
+        if (is_numeric($id)) {
+            $business = Business::where('id', $id)->where('status', true)->first();
+        } else {
+            $business = Business::where('slug', $id)->where('status', true)->first();
+        }
+        if (!$business) {
             return ApiResponse::error('Business not found', 404);
         }
-        return ApiResponse::collection(ForOnlyBusinessResource::collection(collect([$Business])), 'Business fetched successfully');
-
-
-        $business = $this->repo->find($id);
         return ApiResponse::resource(new ForOnlyBusinessResource($business));
     }
 }

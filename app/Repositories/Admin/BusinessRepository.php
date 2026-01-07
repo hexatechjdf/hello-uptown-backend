@@ -8,7 +8,7 @@ class BusinessRepository
 {
     public function query()
     {
-        return Business::with('user');
+        return Business::with(['user', 'category']);
     }
 
     public function find(int $id)
