@@ -27,7 +27,10 @@ class RedemptionController extends Controller
     }
     public function RedemptionStats()
     {
-        $stats = Redemption::selectRaw('status, COUNT(*) as total')->groupBy('status')->pluck('total', 'status');
+        $businessId = request()->query('business_id');
+        $businessId = $businessId !== null && $businessId != 0 ? (int) $businessId : auth()->user()->business->id;
+
+        $stats = Redemption::selectRaw('status, COUNT(*) as total')->where('business_id', $businessId)->groupBy('status')->pluck('total', 'status');
 
         $response = [
             'total'     => $stats->sum(),

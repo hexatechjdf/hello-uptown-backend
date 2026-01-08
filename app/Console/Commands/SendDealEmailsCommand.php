@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Mail;
 
 class SendDealEmailsCommand extends Command
 {
-    \Log::info("message send emallll ");
     protected $signature = 'deal:send-emails {deal_id}';
     protected $description = 'Send deal email notifications to subscribers';
 

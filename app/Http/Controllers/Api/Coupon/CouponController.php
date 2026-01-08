@@ -19,8 +19,7 @@ class CouponController extends Controller
 
     public function index()
     {
-               $businessId = request()->query('business_id');
-
+        $businessId = request()->query('business_id');
         $businessId = $businessId !== null && $businessId != 0
         ? (int) $businessId
         : auth()->user()->business->id;

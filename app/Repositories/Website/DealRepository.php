@@ -38,11 +38,11 @@ class DealRepository
         }
 
         if (!empty($filters['price_min'])) {
-            $query->where('discounted_price', '>=', $filters['price_min']);
+            $query->where('discount', '>=', $filters['price_min']);
         }
 
         if (!empty($filters['price_max'])) {
-            $query->where('discounted_price', '<=', $filters['price_max']);
+            $query->where('discount', '<=', $filters['price_max']);
         }
 
         if (!empty($filters['filter'])) {

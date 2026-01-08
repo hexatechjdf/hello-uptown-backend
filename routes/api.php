@@ -32,6 +32,7 @@ use App\Http\Controllers\Api\Frontend\HomeController;
 use App\Http\Controllers\Api\Frontend\RedemptionController as FrontendRedemptionController;
 use App\Http\Controllers\Api\Frontend\SubscribrNewsLetterController;
 use App\Http\Controllers\Api\Redemption\RedemptionController;
+use App\Http\Controllers\Api\Report\ReportController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -81,7 +82,8 @@ Route::post('/contact-message', [ContactMessageController::class, 'store']);
 Route::post('/newsletter-subscribe', [SubscribrNewsLetterController::class, 'subscribe']);
 Route::get('/unsubscribe/{email}', [SubscribrNewsLetterController::class, 'unsubscribe'])->name('unsubscribe');
 
-Route::post('/redemption', [FrontendRedemptionController::class, 'redeem']);
+Route::post('/redemption', [FrontendRedemptionController::class, 'redemption']);
+Route::post('/check-eligibility', [FrontendRedemptionController::class, 'checkEligibility']);
 Route::post('/customer', [FrontendRedemptionController::class, 'validateOrCreateCustomer']);
 // Route::post('/contact-us', [ContactMessageController::class, 'submit']);
 
@@ -108,14 +110,23 @@ Route::middleware(['auth:sanctum', 'check_business_id:business_admin,superadmin'
     });
 });
 
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::prefix('auth')->group(function () {
+        Route::post('/password-update', [BusinessController::class, 'passwordUpdate']);
+        Route::post('/user-update', [BusinessController::class, 'userUpdate']);
+        Route::get('/user/{id?}', [BusinessController::class, 'user']);
+    });
+});
 
 Route::middleware(['auth:sanctum', 'role:business_admin'])->group(function () {
     Route::prefix('business')->group(function () {
+        Route::get('redemptions-trend', [ReportController::class, 'redemptionsTrend']);
+        Route::get('category-distribution', [ReportController::class,'categoryDistribution']);
 
         Route::get('/profile', [BusinessController::class, 'getProfile']);
-        Route::post('/user-update', [BusinessController::class, 'userUpdate']);
+        // Route::post('/user-update', [BusinessController::class, 'userUpdate']);
         Route::post('/user-notifications', [BusinessController::class, 'userNotification']);
-        Route::post('/password-update', [BusinessController::class, 'passwordUpdate']);
+        // Route::post('/password-update', [BusinessController::class, 'passwordUpdate']);
         Route::put('/profile/{business}', [BusinessController::class, 'update']);
         // Route::apiResource('deals', ApiDealController::class);
         // Route::get('/deal-stats', [ApiDealController::class, 'dealStats']);

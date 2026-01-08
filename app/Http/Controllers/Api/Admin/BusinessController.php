@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 use App\Resources\Admin\User\UserResource as AdminUserResource;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use App\Models\Role;
 
 class BusinessController extends Controller
 {
@@ -23,7 +24,9 @@ class BusinessController extends Controller
 
     public function getProfile(Request $request)
     {
-        $business = $this->service->getByUserId($request->user()->id);
+        $business = Business::where('user_id', auth()->user()->id)->with('user')->first();
+
+        // $business = $this->service->getByUserId($request->user()->id);
 
         return ApiResponse::resource(new BusinessResource($business->load('user')),'Business profile fetched successfully');
     }
@@ -60,6 +63,10 @@ class BusinessController extends Controller
                 : Hash::make(Str::random(12));
 
             $user->save();
+
+
+            $role = Role::where('name', 'business_admin')->first();
+            $user->roles()->attach($role->id);
 
             $businessValidated = $request->validate([
                 'business_name' => 'required|string|max:255',
@@ -210,8 +217,25 @@ class BusinessController extends Controller
         return ApiResponse::success(AdminUserResource::collection($users),'User list retrieved');
     }
 
-    public function user($id)
+    public function user($id = null)
     {
+        $request = request();
+          if($request->has('business_id') && $request->business_id !== null){
+                $id = User::where('business_id' , request()->business_id)->first()->id;
+            }else{
+
+               if(!$id){
+                    $id = auth()->user()->id;
+                }
+            }
+
+        if(!$id){
+            $id = auth()->user()->id;
+        }
+
+        if(!$id){
+            return ApiResponse::error('User id not found');
+        }
         $user = User::find($id);
          return ApiResponse::resource(new AdminUserResource($user),'User information');
     }
@@ -235,10 +259,14 @@ class BusinessController extends Controller
 
     public function userUpdate(Request $request)
     {
-        if($request->has('user_id') && $request->user_id !== null){
-            $user = User::find($request->user_id);
+        if($request->has('business_id') && $request->business_id !== null){
+                $user = User::where('business_id', $request->business_id)->first();
         }else{
-            $user = $request->user();
+            if($request->has('user_id') && $request->user_id !== null){
+                $user = User::find($request->user_id);
+            }else{
+                $user = $request->user();
+            }
         }
 
         $validated = $request->validate([
@@ -246,7 +274,7 @@ class BusinessController extends Controller
             'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
             'profile' => ['nullable', 'string', 'max:500'],
-            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+            'password' => ['nullable', 'string', 'min:8'],
         ]);
         $user->first_name = $validated['first_name'];
         $user->last_name = $validated['last_name'];
@@ -287,7 +315,17 @@ class BusinessController extends Controller
                 'confirm_new_password.same' => 'New password and confirmation password do not match.'
             ]);
 
-            $user = $request->user();
+            // $user = $request->user();
+            if($request->has('business_id') && $request->business_id !== null){
+                $user = User::where('business_id', $request->business_id)->first();
+            }else{
+                if($request->has('user_id') && $request->user_id !== null){
+                    $user = User::find($request->user_id);
+                }else{
+                    $user = $request->user();
+                }
+            }
+
             if (!Hash::check($request->current_password, $user->password)) {
                 return response()->json([
                     'message' => 'Current password is incorrect.',

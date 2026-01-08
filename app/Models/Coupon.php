@@ -45,7 +45,8 @@ class Coupon extends Model
     }
 
     public function redemptions()
-{
-    return $this->hasMany(Redemption::class);
-}
+    {
+        return $this->hasMany(Redemption::class, 'parent_id')
+            ->where('type', 'coupon');
+    }
 }
