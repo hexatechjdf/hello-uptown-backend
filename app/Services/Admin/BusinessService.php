@@ -3,7 +3,6 @@
 namespace App\Services\Admin;
 
 use App\Repositories\Admin\BusinessRepository;
-use Illuminate\Support\Str;
 
 class BusinessService
 {
@@ -28,20 +27,18 @@ class BusinessService
 
     public function create(array $data)
     {
-        $data['slug'] = Str::slug($data['business_name']);
         return $this->repo->create($data);
     }
 
     public function update($business, array $data)
     {
-        if (!empty($data['business_name'])) {
-            $data['slug'] = Str::slug($data['business_name']);
-        }
-
+        // ❌ DO NOT regenerate slug here
+        // Controller already handled unique slug logic
         return $this->repo->update($business, $data);
     }
+
     public function getByUserId($userId)
     {
-        return $this->repo->findByField('user_id', $userId)->first();
+        return $this->repo->findByField('user_id', $userId);
     }
 }

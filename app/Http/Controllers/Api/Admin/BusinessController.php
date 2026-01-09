@@ -26,10 +26,12 @@ class BusinessController extends Controller
     {
         $business = Business::where('user_id', auth()->user()->id)->with('user')->first();
 
-        // $business = $this->service->getByUserId($request->user()->id);
-
-        return ApiResponse::resource(new BusinessResource($business->load('user')),'Business profile fetched successfully');
+        return ApiResponse::resource(
+            new BusinessResource($business->load('user')),
+            'Business profile fetched successfully'
+        );
     }
+
     public function index(Request $request)
     {
         $businesses = $this->service->list($request->all());
@@ -63,7 +65,6 @@ class BusinessController extends Controller
                 : Hash::make(Str::random(12));
 
             $user->save();
-
 
             $role = Role::where('name', 'business_admin')->first();
             $user->roles()->attach($role->id);
@@ -108,15 +109,24 @@ class BusinessController extends Controller
                 'send_new_deals' => 'nullable|boolean',
                 'status'         => 'nullable|boolean',
             ]);
+
+            // create unique slug
             $slug = Str::slug($businessValidated['business_name']);
-            if (Business::where('slug', $slug)->exists()) {
-                abort(422, 'Business with this name already exists');
+            $originalSlug = $slug;
+            $count = 1;
+
+            while (Business::where('slug', $slug)->exists()) {
+                $slug = $originalSlug . '-' . $count++;
             }
+
             $businessValidated['slug'] = $slug;
             $businessValidated['user_id'] = $user->id;
+
             $business = $this->service->create($businessValidated);
+
             $user->business_id = $business->id;
             $user->save();
+
             return ApiResponse::success(
                 [
                     'business' => new BusinessResource($business),
@@ -134,23 +144,19 @@ class BusinessController extends Controller
             'Business details'
         );
     }
+
     public function update(Request $request, Business $business)
     {
         $data = $request->validate([
             'business_name' => 'sometimes|string|max:255',
-            // Descriptions
             'short_description' => 'sometimes|string',
             'long_description'  => 'sometimes|string',
             'description'       => 'sometimes|string',
-            // Category & Tags
             'category_id' => 'sometimes|exists:categories,id',
             'tags'        => 'sometimes|array',
             'tags.*'      => 'string',
-
-            // Branding
             'logo'        => 'sometimes|string',
             'cover_image' => 'sometimes|string',
-            // Contact & Location
             'address'           => 'sometimes|string',
             'latitude'          => 'sometimes|numeric',
             'longitude'         => 'sometimes|numeric',
@@ -159,13 +165,9 @@ class BusinessController extends Controller
             'email'             => 'sometimes|email',
             'website'           => 'sometimes|url',
             'opening_hours'     => 'sometimes|string',
-
-            // Social Links
             'facebook_link'  => 'sometimes|url',
             'instagram_link' => 'sometimes|url',
             'twitter_link'   => 'sometimes|url',
-
-            // Slider Settings
             'slider_tagline'           => 'sometimes|string',
             'slider_section_text'      => 'sometimes|string',
             'slider_heading_one'       => 'sometimes|string',
@@ -174,20 +176,18 @@ class BusinessController extends Controller
             'slider_image'             => 'sometimes|string',
             'image_overlay_heading'    => 'sometimes|string',
             'image_overlay_heading2'   => 'sometimes|string',
-
             'slider_text1'       => 'sometimes|string',
             'slider_text1_value' => 'sometimes|string',
             'slider_text2'       => 'sometimes|string',
             'slider_text2_value' => 'sometimes|string',
             'slider_text3'       => 'sometimes|string',
             'slider_text3_value' => 'sometimes|string',
-
-            // Notification & Status
             'send_new_deals' => 'sometimes|boolean',
             'status'         => 'sometimes|boolean',
         ]);
 
-            if (isset($data['business_name'])) {
+        // ensure unique slug on update
+        if (isset($data['business_name'])) {
             $slug = Str::slug($data['business_name']);
             $originalSlug = $slug;
             $count = 1;
@@ -199,9 +199,10 @@ class BusinessController extends Controller
             ) {
                 $slug = $originalSlug . '-' . $count++;
             }
+
             $data['slug'] = $slug;
         }
-        // dd($data);
+
         $this->service->update($business, $data);
         $business->refresh();
 
@@ -220,24 +221,22 @@ class BusinessController extends Controller
     public function user($id = null)
     {
         $request = request();
-          if($request->has('business_id') && $request->business_id !== null){
-                $id = User::where('business_id' , request()->business_id)->first()->id;
-            }else{
 
-               if(!$id){
-                    $id = auth()->user()->id;
-                }
+        if($request->has('business_id') && $request->business_id !== null){
+            $id = User::where('business_id' , request()->business_id)->first()->id;
+        }else{
+            if(!$id){
+                $id = auth()->user()->id;
             }
-
-        if(!$id){
-            $id = auth()->user()->id;
         }
 
         if(!$id){
             return ApiResponse::error('User id not found');
         }
+
         $user = User::find($id);
-         return ApiResponse::resource(new AdminUserResource($user),'User information');
+
+        return ApiResponse::resource(new AdminUserResource($user),'User information');
     }
 
     public function userDelete($id)
@@ -247,20 +246,20 @@ class BusinessController extends Controller
             return ApiResponse::error('User already deleted');
         }
         $user->delete();
-         return ApiResponse::resource(new AdminUserResource($user),'User deeted successfully');
+
+        return ApiResponse::resource(new AdminUserResource($user),'User deleted successfully');
     }
 
     public function destroy(Business $business)
     {
         $business->delete();
-
         return ApiResponse::success(null, 'Business deleted successfully');
     }
 
     public function userUpdate(Request $request)
     {
         if($request->has('business_id') && $request->business_id !== null){
-                $user = User::where('business_id', $request->business_id)->first();
+            $user = User::where('business_id', $request->business_id)->first();
         }else{
             if($request->has('user_id') && $request->user_id !== null){
                 $user = User::find($request->user_id);
@@ -276,6 +275,7 @@ class BusinessController extends Controller
             'profile' => ['nullable', 'string', 'max:500'],
             'password' => ['nullable', 'string', 'min:8'],
         ]);
+
         $user->first_name = $validated['first_name'];
         $user->last_name = $validated['last_name'];
         $user->email = $validated['email'];
@@ -291,15 +291,24 @@ class BusinessController extends Controller
         return ApiResponse::resource(new UserResource($user), 'User updated successfully');
     }
 
-    public function userNotification(Request $request)
+    public function featured(Request $request)
     {
-        $user = $request->user();
-        $validated = $request->validate([
-            'notifications' => ['required', 'string', 'max:255']
+        $data = $request->validate([
+            'business_id' => 'required|exists:businesses,id',
+            'is_featured' => 'required|boolean',
         ]);
-        $user->notifications = $validated['notifications'];
-        $user->save();
-        return ApiResponse::resource(new UserResource($user), 'User Notification status updated successfully');
+
+        $business = Business::find($data['business_id']);
+
+        $business->is_featured = $data['is_featured'];
+        $business->save();
+
+        return ApiResponse::resource(
+            new BusinessResource($business),
+            $data['is_featured']
+                ? 'Business marked as featured successfully'
+                : 'Business removed from featured successfully'
+        );
     }
 
     public function passwordUpdate(Request $request)
@@ -307,64 +316,58 @@ class BusinessController extends Controller
         $request->validate([
             'current_password' => 'required',
             'new_password' => 'required|min:12|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/',
-                'confirm_new_password' => 'required|same:new_password'
-            ],
-            [
-                'new_password.regex' => 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.',
-                'new_password.min' => 'Password must be at least 12 characters long.',
-                'confirm_new_password.same' => 'New password and confirmation password do not match.'
-            ]);
+            'confirm_new_password' => 'required|same:new_password'
+        ], [
+            'new_password.regex' => 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character.',
+            'new_password.min' => 'Password must be at least 12 characters long.',
+            'confirm_new_password.same' => 'New password and confirmation password do not match.'
+        ]);
 
-            // $user = $request->user();
-            if($request->has('business_id') && $request->business_id !== null){
-                $user = User::where('business_id', $request->business_id)->first();
-            }else{
-                if($request->has('user_id') && $request->user_id !== null){
-                    $user = User::find($request->user_id);
-                }else{
-                    $user = $request->user();
-                }
+        if ($request->has('business_id') && $request->business_id !== null) {
+            $user = User::where('business_id', $request->business_id)->first();
+        } else {
+            if ($request->has('user_id') && $request->user_id !== null) {
+                $user = User::find($request->user_id);
+            } else {
+                $user = $request->user();
             }
-
-            if (!Hash::check($request->current_password, $user->password)) {
-                return response()->json([
-                    'message' => 'Current password is incorrect.',
-                    'errors' => [
-                        'current_password' => ['Current password is incorrect.']
-                    ]
-                ], 422);
-            }
-            if (Hash::check($request->new_password, $user->password)) {
-                return response()->json([
-                    'message' => 'New password must be different from current password.',
-                    'errors' => [
-                        'new_password' => ['New password must be different from current password.']
-                    ]
-                ], 422);
-            }
-            $user->password = $request->new_password;
-            $user->save();
-
-            return ApiResponse::resource(new UserResource($user), 'Password updated successfully');
         }
 
-        public function featured(Request $request)
-        {
-            $data = $request->validate([
-                'business_id' => 'required|exists:businesses,id',
-                'is_featured' => 'required|boolean',
-            ]);
-
-            $business = Business::find($data['business_id']);
-
-            $business->is_featured = $data['is_featured'];
-            $business->save();
-
-            return ApiResponse::resource(
-                new BusinessResource($business),
-                $data['is_featured']
-                    ? 'Business marked as featured successfully'
-                    : 'Business removed from featured successfully'
-            );
+        if (!Hash::check($request->current_password, $user->password)) {
+            return response()->json([
+                'message' => 'Current password is incorrect.',
+                'errors' => [
+                    'current_password' => ['Current password is incorrect.']
+                ]
+            ], 422);
         }
+
+        if (Hash::check($request->new_password, $user->password)) {
+            return response()->json([
+                'message' => 'New password must be different from current password.',
+                'errors' => [
+                    'new_password' => ['New password must be different from current password.']
+                ]
+            ], 422);
+        }
+
+        $user->password = $request->new_password;
+        $user->save();
+
+        return ApiResponse::resource(new UserResource($user), 'Password updated successfully');
+    }
+
+
+    public function userNotification(Request $request)
+    {
+        $data = $request->validate([
+            'notifications' => 'required|boolean',
+        ]);
+
+        $user = auth()->user();
+        $user->notifications = $request->notifications;
+        $user->save();
+        return ApiResponse::resource(new UserResource($user), 'User notifications setting updated successfully');
+    }
+
 }

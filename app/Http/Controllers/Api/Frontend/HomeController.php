@@ -127,6 +127,28 @@ class HomeController extends Controller
             'Footer information fetched successfully'
         );
     }
+    public function info(Request $request)
+    {
+        if ($request->has('business_id') && $request->business_id !== null) {
+            $user = User::where('business_id', $request->business_id)->first();
+        } else {
+            if ($request->has('user_id') && $request->user_id !== null) {
+                $user = User::find($request->user_id);
+            } else {
+                $user = $request->user();
+            }
+        }
+
+        // $user = $request->user()->load('business.category');
+        $responseData = [
+            'user' => new UserResource($user),
+            'additional_info' => [
+                'business_name' => $user->business?->business_name ?? 'N/A',
+                'category_name' => $user->business?->category->name ?? 'N/A',
+            ],
+        ];
+        return ApiResponse::success($responseData, 'User Fetched Successfully');
+    }
     public function GetMyInfo(Request $request)
     {
         $user  = $request->user();

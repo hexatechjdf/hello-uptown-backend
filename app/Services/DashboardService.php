@@ -46,7 +46,7 @@ class DashboardService
         {
             [$from, $to] = $this->dateRange($duration);
 
-            return Redemption::with(['coupon:id,title', 'user:id,name'])
+            return Redemption::with(['coupon:id,title', 'customer:id,name'])
                 ->where('business_id', $businessId)
                 ->whereBetween('redeemed_at', [$from, $to])
                 ->orderBy('redeemed_at', 'desc')

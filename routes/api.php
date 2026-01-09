@@ -89,6 +89,7 @@ Route::post('/customer', [FrontendRedemptionController::class, 'validateOrCreate
 
 
 Route::get('/me', [HomeController::class, 'GetMyInfo'])->middleware('auth:sanctum');
+Route::get('/info', [HomeController::class, 'info'])->middleware('auth:sanctum');
 Route::prefix('auth')->group(function () {
     Route::post('register', [AuthController::class, 'register']);
     Route::post('login', [AuthController::class, 'login']);
@@ -115,6 +116,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/password-update', [BusinessController::class, 'passwordUpdate']);
         Route::post('/user-update', [BusinessController::class, 'userUpdate']);
         Route::get('/user/{id?}', [BusinessController::class, 'user']);
+        Route::apiResource('categories', CategoryController::class);
     });
 });
 
